@@ -1,5 +1,5 @@
 Table users {
-  id BIGINT [pk]
+  id UUID [pk]
   firstName VARCHAR
   lastName VARCHAR
   email VARCHAR [unique, not null]
@@ -11,7 +11,7 @@ Table users {
 }
 
 Table admins {
-  id BIGINT [pk]
+  id UUID [pk]
   firstName VARCHAR
   lastName VARCHAR
   email VARCHAR [unique, not null]
@@ -22,9 +22,9 @@ Table admins {
 }
 
 Table trips {
-  id BIGINT [pk]
-  user_id BIGINT [ref: > users.id]
-  admin_id BIGINT [ref: > admins.id, null] // Admin can create trips
+  id UUID [pk]
+  user_id UUID [ref: > users.id]
+  admin_id UUID [ref: > admins.id, null]
   destination VARCHAR
   startDate DATE
   endDate DATE
@@ -33,20 +33,20 @@ Table trips {
 }
 
 Table bookings {
-  id BIGINT [pk]
-  user_id BIGINT [ref: > users.id]
-  trip_id BIGINT [ref: > trips.id]
+  id UUID [pk]
+  user_id UUID [ref: > users.id]
+  trip_id UUID [ref: > trips.id]
   bookingType ENUM('HOTEL', 'BUS', 'VEHICLE')
-  hotel_id BIGINT [ref: > hotels.id, null]
-  bus_id BIGINT [ref: > buses.id, null]
-  vehicle_id BIGINT [ref: > vehicles.id, null]
+  hotel_id UUID [ref: > hotels.id, null]
+  bus_id UUID [ref: > buses.id, null]
+  vehicle_id UUID [ref: > vehicles.id, null]
   status ENUM('CONFIRMED', 'CANCELED')
   amount DOUBLE
   createdAt DATETIME
 }
 
 Table hotels {
-  id BIGINT [pk]
+  id UUID [pk]
   name VARCHAR
   location VARCHAR
   rating DOUBLE
@@ -54,16 +54,16 @@ Table hotels {
 }
 
 Table buses {
-  id BIGINT [pk]
+  id UUID [pk]
   busNumber VARCHAR
-  route_id BIGINT [ref: > routes.id]
+  route VARCHAR
   departureTime TIME
   arrivalTime TIME
   availableSeats INT
 }
 
 Table vehicles {
-  id BIGINT [pk]
+  id UUID [pk]
   vehicleType ENUM('CAR', 'VAN', 'BIKE', 'SUV')
   model VARCHAR
   registrationNumber VARCHAR
@@ -72,9 +72,9 @@ Table vehicles {
 }
 
 Table payments {
-  id BIGINT [pk]
-  user_id BIGINT [ref: > users.id]
-  booking_id BIGINT [ref: > bookings.id]
+  id UUID [pk]
+  user_id UUID [ref: > users.id]
+  booking_id UUID [ref: > bookings.id]
   merchantId VARCHAR
   orderId VARCHAR
   paymentId VARCHAR
@@ -90,16 +90,16 @@ Table payments {
 }
 
 Table feedbacks {
-  id BIGINT [pk]
-  user_id BIGINT [ref: > users.id]
-  trip_id BIGINT [ref: > trips.id]
+  id UUID [pk]
+  user_id UUID [ref: > users.id]
+  trip_id UUID [ref: > trips.id]
   comment TEXT
   rating INT
   createdAt DATETIME
 }
 
 Table routes {
-  id BIGINT [pk]
+  id UUID [pk]
   startPoint VARCHAR
   endPoint VARCHAR
   distance DOUBLE
@@ -107,8 +107,8 @@ Table routes {
 }
 
 Table trip_packages {
-  id BIGINT [pk]
-  travel_agency_id BIGINT [ref: > travel_agencies.id]
+  id UUID [pk]
+  travel_agency_id UUID [ref: > travel_agencies.id]
   name VARCHAR
   description TEXT
   price DOUBLE
@@ -116,15 +116,15 @@ Table trip_packages {
 }
 
 Table travel_agencies {
-  id BIGINT [pk]
+  id UUID [pk]
   name VARCHAR
   contactInfo VARCHAR
   address VARCHAR
 }
 
 Table notifications {
-  id BIGINT [pk]
-  user_id BIGINT [ref: > users.id]
+  id UUID [pk]
+  user_id UUID [ref: > users.id]
   message TEXT
   isRead BOOLEAN
   createdAt DATETIME
