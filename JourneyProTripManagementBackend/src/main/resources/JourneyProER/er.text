@@ -1,0 +1,121 @@
+Table users {
+  id BIGINT [pk]
+  firstName VARCHAR
+  lastName VARCHAR
+  email VARCHAR [unique, not null]
+  password VARCHAR
+  phoneNumber VARCHAR
+  address VARCHAR
+  profilePicture VARCHAR
+  role ENUM('USER', 'ADMIN')
+  createdAt DATETIME
+}
+
+Table trips {
+  id BIGINT [pk]
+  user_id BIGINT [ref: > users.id]
+  trip_package_id BIGINT [ref: > trip_packages.id] // Link trips to packages
+  destination VARCHAR
+  startDate DATE
+  endDate DATE
+  status ENUM('UPCOMING', 'ONGOING', 'COMPLETED')
+  createdAt DATETIME
+}
+
+Table bookings {
+  id BIGINT [pk]
+  user_id BIGINT [ref: > users.id]
+  trip_id BIGINT [ref: > trips.id]
+  bookingType ENUM('HOTEL', 'BUS', 'VEHICLE')
+  hotel_id BIGINT [ref: > hotels.id, null]
+  bus_id BIGINT [ref: > buses.id, null]
+  vehicle_id BIGINT [ref: > vehicles.id, null]
+  status ENUM('CONFIRMED', 'CANCELED')
+  amount DOUBLE
+  createdAt DATETIME
+}
+
+Table hotels {
+  id BIGINT [pk]
+  name VARCHAR
+  location VARCHAR
+  rating DOUBLE
+  contactInfo VARCHAR
+}
+
+Table buses {
+  id BIGINT [pk]
+  busNumber VARCHAR
+  route_id BIGINT [ref: > routes.id] // Link buses to routes
+  departureTime TIME
+  arrivalTime TIME
+  availableSeats INT
+}
+
+Table vehicles {
+  id BIGINT [pk]
+  vehicleType ENUM('CAR', 'VAN', 'BIKE', 'SUV')
+  model VARCHAR
+  registrationNumber VARCHAR
+  seatCapacity INT
+  isAvailable BOOLEAN
+}
+
+Table payments {
+  id BIGINT [pk]
+  user_id BIGINT [ref: > users.id]
+  booking_id BIGINT [ref: > bookings.id]
+  merchantId VARCHAR
+  orderId VARCHAR
+  paymentId VARCHAR
+  statusCode VARCHAR
+  paymentMethod ENUM('CARD', 'PAYPAL', 'CRYPTO')
+  transactionId VARCHAR
+  amount DOUBLE
+  currency VARCHAR
+  description VARCHAR
+  status ENUM('PENDING', 'SUCCESS', 'FAILED')
+  createdAt DATETIME
+  updatedAt DATETIME
+}
+
+Table feedbacks {
+  id BIGINT [pk]
+  user_id BIGINT [ref: > users.id]
+  trip_id BIGINT [ref: > trips.id]
+  comment TEXT
+  rating INT
+  createdAt DATETIME
+}
+
+Table routes {
+  id BIGINT [pk]
+  startPoint VARCHAR
+  endPoint VARCHAR
+  distance DOUBLE
+  estimatedTime VARCHAR
+}
+
+Table trip_packages {
+  id BIGINT [pk]
+  travel_agency_id BIGINT [ref: > travel_agencies.id] // Link packages to agencies
+  name VARCHAR
+  description TEXT
+  price DOUBLE
+  includedServices TEXT
+}
+
+Table travel_agencies {
+  id BIGINT [pk]
+  name VARCHAR
+  contactInfo VARCHAR
+  address VARCHAR
+}
+
+Table notifications {
+  id BIGINT [pk]
+  user_id BIGINT [ref: > users.id]
+  message TEXT
+  isRead BOOLEAN
+  createdAt DATETIME
+}
