@@ -7,14 +7,24 @@ Table users {
   phoneNumber VARCHAR
   address VARCHAR
   profilePicture VARCHAR
-  role ENUM('USER', 'ADMIN')
+  createdAt DATETIME
+}
+
+Table admins {
+  id BIGINT [pk]
+  firstName VARCHAR
+  lastName VARCHAR
+  email VARCHAR [unique, not null]
+  password VARCHAR
+  phoneNumber VARCHAR
+  address VARCHAR
   createdAt DATETIME
 }
 
 Table trips {
   id BIGINT [pk]
   user_id BIGINT [ref: > users.id]
-  trip_package_id BIGINT [ref: > trip_packages.id] // Link trips to packages
+  admin_id BIGINT [ref: > admins.id, null] // Admin can create trips
   destination VARCHAR
   startDate DATE
   endDate DATE
@@ -46,7 +56,7 @@ Table hotels {
 Table buses {
   id BIGINT [pk]
   busNumber VARCHAR
-  route_id BIGINT [ref: > routes.id] // Link buses to routes
+  route_id BIGINT [ref: > routes.id]
   departureTime TIME
   arrivalTime TIME
   availableSeats INT
@@ -98,7 +108,7 @@ Table routes {
 
 Table trip_packages {
   id BIGINT [pk]
-  travel_agency_id BIGINT [ref: > travel_agencies.id] // Link packages to agencies
+  travel_agency_id BIGINT [ref: > travel_agencies.id]
   name VARCHAR
   description TEXT
   price DOUBLE
