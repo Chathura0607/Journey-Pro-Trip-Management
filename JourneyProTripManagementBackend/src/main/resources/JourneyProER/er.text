@@ -1,24 +1,26 @@
 Table users {
   id UUID [pk]
-  firstName VARCHAR
-  lastName VARCHAR
-  email VARCHAR [unique, not null]
-  password VARCHAR
-  phoneNumber VARCHAR
-  address VARCHAR
-  profilePicture VARCHAR
-  createdAt DATETIME
+  firstName varchar
+  lastName varchar
+  email varchar [unique, not null]
+  password varchar
+  phoneNumber varchar
+  address varchar
+  profilePicture varchar
+  role varchar [default: 'USER']
+  createdAt datetime
 }
 
 Table admins {
   id UUID [pk]
-  firstName VARCHAR
-  lastName VARCHAR
-  email VARCHAR [unique, not null]
-  password VARCHAR
-  phoneNumber VARCHAR
-  address VARCHAR
-  createdAt DATETIME
+  firstName varchar
+  lastName varchar
+  email varchar [unique, not null]
+  password varchar
+  phoneNumber varchar
+  address varchar
+  role varchar [default: 'ADMIN']
+  createdAt datetime
 }
 
 Table trips {
