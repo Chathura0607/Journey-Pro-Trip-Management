@@ -18,7 +18,7 @@ public class JwtUtil {
     @Value("${jwt.secret}") // Ensure this property is defined in application.properties
     private String secretKey;
 
-    @Value("${jwt.expiration}") // Token expiration time in milliseconds (e.g., 3600000 for 1 hour)
+    @Value("${jwt.expiration}") // Token expiration time in milliseconds
     private long expirationTime;
 
     // Retrieve username from JWT token

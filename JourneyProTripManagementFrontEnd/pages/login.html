@@ -14,6 +14,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .login-container {
             background-color: #fff;
             padding: 20px;
@@ -22,9 +23,11 @@
             width: 300px;
             text-align: center;
         }
+
         .login-container h2 {
             margin-bottom: 20px;
         }
+
         .login-container input {
             width: 100%;
             padding: 10px;
@@ -32,6 +35,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         .login-container button {
             width: 100%;
             padding: 10px;
@@ -41,9 +45,11 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         .login-container button:hover {
             background-color: #218838;
         }
+
         .error-message {
             color: red;
             margin-top: 10px;
@@ -75,7 +81,7 @@
                 url: 'http://localhost:8080/api/v1/auth/authenticate',
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ email, password }),
+                data: JSON.stringify({email, password}),
                 success: function (data) {
                     if (data.code === 200) {
                         localStorage.setItem('token', data.data.token);
