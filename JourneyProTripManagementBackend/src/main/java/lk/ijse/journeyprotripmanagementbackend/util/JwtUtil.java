@@ -15,8 +15,11 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret}") // Ensure this property is defined in application.properties
     private String secretKey;
+
+    @Value("${jwt.expiration}") // Token expiration time in milliseconds (e.g., 3600000 for 1 hour)
+    private long expirationTime;
 
     // Retrieve username from JWT token
     public String getUsernameFromToken(String token) {
@@ -36,12 +39,10 @@ public class JwtUtil {
 
     // Retrieve all claims from the token
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-    }
-
-    // Retrieve the role from the token
-    public Claims getUserRoleCodeFromToken(String token) {
-        return getAllClaimsFromToken(token);
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     // Check if the token has expired
@@ -53,17 +54,16 @@ public class JwtUtil {
     // Generate a token for a user
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", userDetails.getAuthorities().iterator().next().getAuthority()); // Add role to claims
-        return doGenerateToken(claims, userDetails.getUsername());
+        return createToken(claims, userDetails.getUsername());
     }
 
-    // Generate a token with claims
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+    // Create a token with claims
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours validity
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }

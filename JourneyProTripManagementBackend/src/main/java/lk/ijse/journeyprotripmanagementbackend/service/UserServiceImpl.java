@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Autowire the PasswordEncoder
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public int saveUser(UserDTO userDTO) {
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         } else {
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword())); // Encode the password
             userDTO.setRole("USER"); // Set default role
-            userDTO.setCreatedAt(LocalDateTime.now()); // Set the createdAt field
+            userDTO.setCreatedAt(LocalDateTime.now());
             userRepository.save(modelMapper.map(userDTO, User.class));
             return VarList.Created;
         }
@@ -44,5 +44,43 @@ public class UserServiceImpl implements UserService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public int updateUserProfile(UserDTO userDTO) {
+        User existingUser = userRepository.findByEmail(userDTO.getEmail());
+        if (existingUser != null) {
+            // Update profile fields
+            existingUser.setFirstName(userDTO.getFirstName());
+            existingUser.setLastName(userDTO.getLastName());
+            existingUser.setPhoneNumber(userDTO.getPhoneNumber());
+            existingUser.setAddress(userDTO.getAddress());
+            existingUser.setProfilePicture(userDTO.getProfilePicture());
+
+            userRepository.save(existingUser);
+            return VarList.OK; // Profile updated successfully
+        }
+        return VarList.Not_Found; // User not found
+    }
+
+    @Override
+    public int changePassword(String email, String oldPassword, String newPassword) {
+        User user = userRepository.findByEmail(email);
+        if (user != null && passwordEncoder.matches(oldPassword, user.getPassword())) {
+            // Update password
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return VarList.OK; // Password changed successfully
+        }
+        return VarList.Unauthorized; // Invalid credentials
+    }
+
+    @Override
+    public UserDTO getUserProfile(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            return modelMapper.map(user, UserDTO.class);
+        }
+        return null; // User not found
     }
 }

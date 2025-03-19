@@ -3,7 +3,6 @@ package lk.ijse.journeyprotripmanagementbackend.service;
 import lk.ijse.journeyprotripmanagementbackend.dto.AdminDTO;
 import lk.ijse.journeyprotripmanagementbackend.entity.Admin;
 import lk.ijse.journeyprotripmanagementbackend.repo.AdminRepository;
-import lk.ijse.journeyprotripmanagementbackend.util.VarList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

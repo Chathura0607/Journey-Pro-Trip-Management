@@ -28,7 +28,7 @@ public class WebSecurityConfig {
     private JwtFilter jwtFilter;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Autowire the PasswordEncoder
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -46,11 +46,14 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/auth/authenticate", // Login endpoint
+                                "/api/v1/auth/logout",
                                 "/api/v1/user/register", // User registration endpoint
                                 "/v3/api-docs/**", // Swagger API docs
                                 "/swagger-ui/**", // Swagger UI
                                 "/swagger-ui.html" // Swagger UI HTML
                         ).permitAll() // Allow these endpoints without authentication
+                        .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN") // Admin-only endpoints
+                        .requestMatchers("/api/v1/user/**").hasAuthority("USER")  // User-only endpoints
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session

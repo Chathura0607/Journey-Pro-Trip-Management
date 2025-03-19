@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,12 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -52,11 +59,15 @@ public class AuthService implements UserDetailsService {
         throw new UsernameNotFoundException("User or Admin not found with email: " + email);
     }
 
-    // Add the login method
     public AuthDTO login(String email, String password) {
         try {
             // Load user details
             UserDetails userDetails = loadUserByUsername(email);
+
+            // Validate the password
+            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
 
             // Generate a JWT token
             String token = jwtUtil.generateToken(userDetails);
@@ -69,5 +80,30 @@ public class AuthService implements UserDetailsService {
         } catch (UsernameNotFoundException e) {
             throw new RuntimeException("User not found with email: " + email);
         }
+    }
+
+    public void logout(String token) {
+        // Extract the token from the "Bearer " prefix if present
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        // Add the token to the blacklist
+        tokenBlacklistService.blacklistToken(token);
+    }
+
+    public boolean isTokenValid(String token) {
+        // Extract the token from the "Bearer " prefix if present
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        // Check if the token is blacklisted
+        if (tokenBlacklistService.isTokenBlacklisted(token)) {
+            return false;
+        }
+
+        // Validate the token using JwtUtil
+        return jwtUtil.validateToken(token, loadUserByUsername(jwtUtil.getUsernameFromToken(token)));
     }
 }
