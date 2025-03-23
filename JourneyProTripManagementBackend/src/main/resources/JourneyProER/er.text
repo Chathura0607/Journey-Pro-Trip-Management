@@ -131,3 +131,360 @@ Table notifications {
   isRead BOOLEAN
   createdAt DATETIME
 }
+
+1. User Endpoints
+Authentication
+User Registration
+
+POST /api/v1/user/register
+
+Registers a new user.
+
+User Login
+
+POST /api/v1/auth/authenticate
+
+Authenticates a user and returns a JWT token.
+
+User Logout
+
+POST /api/v1/auth/logout
+
+Logs out the user and invalidates the session.
+
+Profile Management
+Update Profile
+
+PUT /api/v1/user/profile
+
+Updates user profile information.
+
+Change Password
+
+PUT /api/v1/user/change-password
+
+Changes the user’s password.
+
+Get Profile
+
+GET /api/v1/user/profile
+
+Fetches the user’s profile information.
+
+Trip Management
+Create Trip
+
+POST /api/v1/user/trips
+
+Creates a new trip.
+
+Get Trip by ID
+
+GET /api/v1/user/trips/{tripId}
+
+Fetches a trip by its ID.
+
+Get All Trips for User
+
+GET /api/v1/user/trips
+
+Fetches all trips for a specific user.
+
+Update Trip
+
+PUT /api/v1/user/trips/{tripId}
+
+Updates a trip by its ID.
+
+Delete Trip
+
+DELETE /api/v1/user/trips/{tripId}
+
+Deletes a trip by its ID.
+
+Booking Management
+Create Booking
+
+POST /api/v1/user/bookings
+
+Creates a new booking (hotel, bus, or vehicle).
+
+Get Booking by ID
+
+GET /api/v1/user/bookings/{bookingId}
+
+Fetches a booking by its ID.
+
+Get All Bookings for User
+
+GET /api/v1/user/bookings
+
+Fetches all bookings for a specific user.
+
+Cancel Booking
+
+PUT /api/v1/user/bookings/{bookingId}/cancel
+
+Cancels a booking by its ID.
+
+Feedback Management
+Submit Feedback
+
+POST /api/v1/user/feedbacks
+
+Submits feedback for a trip.
+
+Get Feedback by ID
+
+GET /api/v1/user/feedbacks/{feedbackId}
+
+Fetches feedback by its ID.
+
+Get All Feedbacks for User
+
+GET /api/v1/user/feedbacks
+
+Fetches all feedbacks for a specific user.
+
+Notification Management
+Get All Notifications
+
+GET /api/v1/user/notifications
+
+Fetches all notifications for a user.
+
+Mark Notification as Read
+
+PUT /api/v1/user/notifications/{notificationId}/read
+
+Marks a notification as read.
+
+2. Admin Endpoints
+Authentication
+Admin Login
+
+POST /api/v1/auth/authenticate
+
+Authenticates an admin and returns a JWT token.
+
+User Management
+Get All Users
+
+GET /api/v1/admin/users
+
+Fetches all users.
+
+Get User by ID
+
+GET /api/v1/admin/users/{userId}
+
+Fetches a user by their ID.
+
+Delete User
+
+DELETE /api/v1/admin/users/{userId}
+
+Deletes a user by their ID.
+
+Trip Management
+Get All Trips
+
+GET /api/v1/admin/trips
+
+Fetches all trips.
+
+Get Trip by ID
+
+GET /api/v1/admin/trips/{tripId}
+
+Fetches a trip by its ID.
+
+Update Trip
+
+PUT /api/v1/admin/trips/{tripId}
+
+Updates a trip by its ID.
+
+Delete Trip
+
+DELETE /api/v1/admin/trips/{tripId}
+
+Deletes a trip by its ID.
+
+Booking Management
+Get All Bookings
+
+GET /api/v1/admin/bookings
+
+Fetches all bookings.
+
+Get Booking by ID
+
+GET /api/v1/admin/bookings/{bookingId}
+
+Fetches a booking by its ID.
+
+Update Booking
+
+PUT /api/v1/admin/bookings/{bookingId}
+
+Updates a booking by its ID.
+
+Delete Booking
+
+DELETE /api/v1/admin/bookings/{bookingId}
+
+Deletes a booking by its ID.
+
+Feedback Management
+Get All Feedbacks
+
+GET /api/v1/admin/feedbacks
+
+Fetches all feedbacks.
+
+Get Feedback by ID
+
+GET /api/v1/admin/feedbacks/{feedbackId}
+
+Fetches feedback by its ID.
+
+Delete Feedback
+
+DELETE /api/v1/admin/feedbacks/{feedbackId}
+
+Deletes feedback by its ID.
+
+Payment Management
+Get All Payments
+
+GET /api/v1/admin/payments
+
+Fetches all payments.
+
+Get Payment by ID
+
+GET /api/v1/admin/payments/{paymentId}
+
+Fetches a payment by its ID.
+
+Update Payment Status
+
+PUT /api/v1/admin/payments/{paymentId}
+
+Updates the status of a payment.
+
+Admin Management
+Add Admin
+
+POST /api/v1/admin/add-admin
+
+Adds a new admin (restricted to existing admins).
+
+Get All Admins
+
+GET /api/v1/admin/admins
+
+Fetches all admins.
+
+Delete Admin
+
+DELETE /api/v1/admin/admins/{adminId}
+
+Deletes an admin by their ID.
+
+3. Additional Endpoints
+Hotel Management
+Get All Hotels
+
+GET /api/v1/hotels
+
+Fetches all hotels.
+
+Get Hotel by ID
+
+GET /api/v1/hotels/{hotelId}
+
+Fetches a hotel by its ID.
+
+Search Hotels by Location
+
+GET /api/v1/hotels/search
+
+Searches hotels by location.
+
+Bus Management
+Get All Buses
+
+GET /api/v1/buses
+
+Fetches all buses.
+
+Get Bus by ID
+
+GET /api/v1/buses/{busId}
+
+Fetches a bus by its ID.
+
+Search Buses by Route
+
+GET /api/v1/buses/search
+
+Searches buses by route.
+
+Vehicle Management
+Get All Vehicles
+
+GET /api/v1/vehicles
+
+Fetches all vehicles.
+
+Get Vehicle by ID
+
+GET /api/v1/vehicles/{vehicleId}
+
+Fetches a vehicle by its ID.
+
+Search Vehicles by Type
+
+GET /api/v1/vehicles/search
+
+Searches vehicles by type.
+
+Route Management
+Get All Routes
+
+GET /api/v1/routes
+
+Fetches all routes.
+
+Get Route by ID
+
+GET /api/v1/routes/{routeId}
+
+Fetches a route by its ID.
+
+Add New Route
+
+POST /api/v1/routes
+
+Adds a new route.
+
+4. Reporting Endpoints
+Generate User Activity Report
+
+GET /api/v1/admin/reports/user-activity
+
+Generates a report on user activity.
+
+Generate Booking Report
+
+GET /api/v1/admin/reports/bookings
+
+Generates a report on bookings.
+
+Generate Payment Report
+
+GET /api/v1/admin/reports/payments
+
+Generates a report on payments.
