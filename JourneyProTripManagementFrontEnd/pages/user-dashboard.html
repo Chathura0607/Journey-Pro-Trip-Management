@@ -3,74 +3,759 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
+    <title>User Dashboard - Journey Pro</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            color: #333;
         }
 
-        .dashboard-container {
+        .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            text-align: center;
         }
 
-        .dashboard-container h1 {
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
         }
 
-        .dashboard-container button {
-            padding: 10px 20px;
-            background-color: #dc3545;
-            color: #fff;
+        .welcome-message h1 {
+            color: #28a745;
+            margin: 0;
+        }
+
+        .welcome-message p {
+            margin: 5px 0 0;
+            color: #6c757d;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
         }
 
-        .dashboard-container button:hover {
-            background-color: #c82333;
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+
+        .btn-outline:hover {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card h2 {
+            color: #28a745;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .dashboard-card h3 {
+            color: #495057;
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .trip-list, .booking-list, .feedback-list, .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .list-item .title {
+            font-weight: bold;
+        }
+
+        .list-item .date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .list-item .details {
+            margin-top: 5px;
+            color: #6c757d;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .status-upcoming {
+            background-color: #cff4fc;
+            color: #055160;
+        }
+
+        .status-ongoing {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+
+        .status-completed {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .view-all {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #28a745;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .notification-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .unread {
+            border-left: 3px solid #28a745;
+            background-color: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
-    <!-- Include jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="dashboard-container">
-    <h1>Welcome to User Dashboard</h1>
-    <button id="logoutButton">Logout</button>
+<div class="container">
+    <div class="dashboard-header">
+        <div class="welcome-message">
+            <h1>Welcome, <span id="userFirstName">User</span>!</h1>
+            <p>Manage your trips and bookings from your personal dashboard</p>
+        </div>
+        <div class="user-actions">
+            <a href="trip-create.html" class="btn">Plan New Trip</a>
+            <a href="user-profile.html" class="btn btn-outline">My Profile</a>
+            <a href="/index.html" class="btn btn-outline">Home</a>
+            <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+        </div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-number" id="totalTrips">0</div>
+            <div class="stat-label">Total Trips</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="activeTrips">0</div>
+            <div class="stat-label">Active Trips</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalBookings">0</div>
+            <div class="stat-label">Total Bookings</div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="dashboard-card">
+            <h2>Your Upcoming Trips</h2>
+            <div id="upcomingTrips" class="trip-list">
+                <div class="no-items">Loading trips...</div>
+            </div>
+            <a href="trip-list.html" class="view-all">View all trips →</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Recent Bookings</h2>
+            <div id="recentBookings" class="booking-list">
+                <div class="no-items">Loading bookings...</div>
+            </div>
+            <a href="#" id="viewAllBookings" class="view-all">View all bookings →</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Latest Feedback</h2>
+            <div id="latestFeedback" class="feedback-list">
+                <div class="no-items">Loading feedback...</div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Notifications</h2>
+            <div id="notifications" class="notification-list">
+                <div class="no-items">Loading notifications...</div>
+            </div>
+            <a href="#" id="markAllRead" class="view-all">Mark all as read</a>
+        </div>
+    </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
+        // Check if user is logged in
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
 
         if (!token || role !== 'USER') {
             window.location.href = 'login.html';
+            return;
         }
 
-        $('#logoutButton').on('click', function () {
+        // Get user ID (placeholder)
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = "current-user";
+        }
+
+        // Load user profile
+        loadUserProfile();
+
+        // Load trips, bookings, feedback, and notifications
+        loadTrips(userId);
+        loadBookings(userId);
+        loadFeedback(userId);
+        loadNotifications(userId);
+
+        // Handle logout
+        $('#logoutBtn').on('click', function() {
+            logout();
+        });
+
+        // Handle mark all notifications as read
+        $('#markAllRead').on('click', function(e) {
+            e.preventDefault();
+            markAllNotificationsAsRead(userId);
+        });
+
+        function loadUserProfile() {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/profile',
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const user = response.data;
+                        $('#userFirstName').text(user.firstName);
+
+                        // Store user ID if available
+                        if (user.id) {
+                            localStorage.setItem('userId', user.id);
+                            userId = user.id;
+
+                            // Reload data with actual user ID
+                            loadTrips(userId);
+                            loadBookings(userId);
+                            loadFeedback(userId);
+                            loadNotifications(userId);
+                        }
+                    }
+                },
+                error: function() {
+                    console.error('Failed to load user profile');
+                }
+            });
+        }
+
+        function loadTrips(userId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/trips?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const trips = response.data || [];
+
+                        // Update stats
+                        $('#totalTrips').text(trips.length);
+
+                        // Count active trips (UPCOMING and ONGOING)
+                        const activeTrips = trips.filter(trip =>
+                            trip.status === 'UPCOMING' || trip.status === 'ONGOING'
+                        ).length;
+                        $('#activeTrips').text(activeTrips);
+
+                        // Display upcoming trips
+                        displayUpcomingTrips(trips);
+                    } else {
+                        $('#upcomingTrips').html('<div class="no-items">Failed to load trips.</div>');
+                    }
+                },
+                error: function() {
+                    $('#upcomingTrips').html('<div class="no-items">An error occurred while loading trips.</div>');
+                }
+            });
+        }
+
+        function displayUpcomingTrips(trips) {
+            let tripsHTML = '';
+
+            if (!trips || trips.length === 0) {
+                tripsHTML = '<div class="no-items">You have no upcoming trips. Click "Plan New Trip" to get started!</div>';
+            } else {
+                // Sort trips by start date (most recent first)
+                const sortedTrips = [...trips].sort((a, b) =>
+                    new Date(a.startDate) - new Date(b.startDate)
+                );
+
+                // Filter for upcoming and ongoing trips
+                const upcomingTrips = sortedTrips.filter(trip =>
+                    trip.status === 'UPCOMING' || trip.status === 'ONGOING'
+                );
+
+                if (upcomingTrips.length === 0) {
+                    tripsHTML = '<div class="no-items">You have no upcoming trips. Click "Plan New Trip" to get started!</div>';
+                } else {
+                    // Display up to 5 upcoming trips
+                    const tripsToShow = upcomingTrips.slice(0, 5);
+
+                    tripsToShow.forEach(trip => {
+                        // Format dates
+                        const startDate = new Date(trip.startDate).toLocaleDateString();
+                        const endDate = new Date(trip.endDate).toLocaleDateString();
+
+                        // Determine status class
+                        let statusClass = '';
+                        switch(trip.status) {
+                            case 'UPCOMING':
+                                statusClass = 'status-upcoming';
+                                break;
+                            case 'ONGOING':
+                                statusClass = 'status-ongoing';
+                                break;
+                        }
+
+                        tripsHTML += `
+                                <div class="list-item">
+                                    <div>
+                                        <div class="title">${trip.destination}</div>
+                                        <div class="details">${startDate} - ${endDate}</div>
+                                    </div>
+                                    <div>
+                                        <span class="status-badge ${statusClass}">${trip.status}</span>
+                                        <a href="trip-details.html?id=${trip.id}" class="btn btn-outline btn-sm">View</a>
+                                    </div>
+                                </div>
+                            `;
+                    });
+                }
+            }
+
+            $('#upcomingTrips').html(tripsHTML);
+        }
+
+        function loadBookings(userId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/bookings?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const bookings = response.data || [];
+
+                        // Update stats
+                        $('#totalBookings').text(bookings.length);
+
+                        // Display recent bookings
+                        displayRecentBookings(bookings);
+
+                        // Set up view all bookings link
+                        if (bookings.length > 0 && bookings[0].tripId) {
+                            $('#viewAllBookings').attr('href', `trip-details.html?id=${bookings[0].tripId}`);
+                        } else {
+                            $('#viewAllBookings').attr('href', 'trip-list.html');
+                        }
+                    } else {
+                        $('#recentBookings').html('<div class="no-items">Failed to load bookings.</div>');
+                    }
+                },
+                error: function() {
+                    $('#recentBookings').html('<div class="no-items">An error occurred while loading bookings.</div>');
+                }
+            });
+        }
+
+        function displayRecentBookings(bookings) {
+            let bookingsHTML = '';
+
+            if (!bookings || bookings.length === 0) {
+                bookingsHTML = '<div class="no-items">You have no bookings yet.</div>';
+            } else {
+                // Sort bookings by creation date (most recent first)
+                const sortedBookings = [...bookings].sort((a, b) =>
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                );
+
+                // Show up to 5 most recent bookings
+                const bookingsToShow = sortedBookings.slice(0, 5);
+
+                bookingsToShow.forEach(booking => {
+                    const createdDate = new Date(booking.createdAt).toLocaleDateString();
+
+                    let bookingTypeText = '';
+                    switch(booking.bookingType) {
+                        case 'HOTEL':
+                            bookingTypeText = 'Hotel Booking';
+                            break;
+                        case 'BUS':
+                            bookingTypeText = 'Bus Ticket';
+                            break;
+                        case 'VEHICLE':
+                            bookingTypeText = 'Vehicle Rental';
+                            break;
+                        default:
+                            bookingTypeText = booking.bookingType;
+                    }
+
+                    bookingsHTML += `
+                            <div class="list-item">
+                                <div>
+                                    <div class="title">${bookingTypeText}</div>
+                                    <div class="details">Amount: $${booking.amount} • ${createdDate}</div>
+                                </div>
+                                <div>
+                                    <a href="booking-details.html?id=${booking.id}" class="btn btn-outline btn-sm">View</a>
+                                </div>
+                            </div>
+                        `;
+                });
+            }
+
+            $('#recentBookings').html(bookingsHTML);
+        }
+
+        function loadFeedback(userId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/feedbacks?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const feedbacks = response.data || [];
+                        displayLatestFeedback(feedbacks);
+                    } else {
+                        $('#latestFeedback').html('<div class="no-items">Failed to load feedback.</div>');
+                    }
+                },
+                error: function() {
+                    $('#latestFeedback').html('<div class="no-items">An error occurred while loading feedback.</div>');
+                }
+            });
+        }
+
+        function displayLatestFeedback(feedbacks) {
+            let feedbackHTML = '';
+
+            if (!feedbacks || feedbacks.length === 0) {
+                feedbackHTML = '<div class="no-items">You have not submitted any feedback yet.</div>';
+            } else {
+                // Sort feedback by creation date (most recent first)
+                const sortedFeedback = [...feedbacks].sort((a, b) =>
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                );
+
+                // Show up to 5 most recent feedback entries
+                const feedbackToShow = sortedFeedback.slice(0, 5);
+
+                feedbackToShow.forEach(feedback => {
+                    const createdDate = new Date(feedback.createdAt).toLocaleDateString();
+                    const stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+
+                    // Get trip information if available
+                    let tripInfo = 'Trip';
+                    if (feedback.tripDestination) {
+                        tripInfo = feedback.tripDestination;
+                    }
+
+                    feedbackHTML += `
+                            <div class="list-item">
+                                <div>
+                                    <div class="title">${tripInfo}</div>
+                                    <div class="details">
+                                        <span style="color: gold;">${stars}</span> • ${createdDate}
+                                    </div>
+                                    <div class="details">
+                                        "${feedback.comment.length > 50 ? feedback.comment.substring(0, 50) + '...' : feedback.comment}"
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="trip-details.html?id=${feedback.tripId}" class="btn btn-outline btn-sm">View Trip</a>
+                                </div>
+                            </div>
+                        `;
+                });
+            }
+
+            $('#latestFeedback').html(feedbackHTML);
+        }
+
+        function loadNotifications(userId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/notifications?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const notifications = response.data || [];
+                        displayNotifications(notifications);
+                    } else {
+                        $('#notifications').html('<div class="no-items">Failed to load notifications.</div>');
+                    }
+                },
+                error: function() {
+                    $('#notifications').html('<div class="no-items">An error occurred while loading notifications.</div>');
+                }
+            });
+        }
+
+        function displayNotifications(notifications) {
+            let notificationsHTML = '';
+
+            if (!notifications || notifications.length === 0) {
+                notificationsHTML = '<div class="no-items">You have no notifications.</div>';
+                $('#markAllRead').hide();
+            } else {
+                // Sort notifications by creation date (most recent first)
+                const sortedNotifications = [...notifications].sort((a, b) =>
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                );
+
+                // Count unread notifications
+                const unreadCount = sortedNotifications.filter(notification => !notification.isRead).length;
+
+                // Show up to 5 most recent notifications
+                const notificationsToShow = sortedNotifications.slice(0, 5);
+
+                notificationsToShow.forEach(notification => {
+                    const createdDate = new Date(notification.createdAt).toLocaleDateString();
+                    const unreadClass = notification.isRead ? '' : 'unread';
+
+                    notificationsHTML += `
+                            <div class="list-item ${unreadClass}" data-id="${notification.id}">
+                                <div>
+                                    <div class="title">${notification.message}</div>
+                                    <div class="date">${createdDate}</div>
+                                </div>
+                                ${!notification.isRead ?
+                        `<button class="btn btn-outline btn-sm mark-read" data-id="${notification.id}">Mark as read</button>` :
+                        ''}
+                            </div>
+                        `;
+                });
+
+                // If there are unread notifications, add a badge to the dashboard
+                if (unreadCount > 0) {
+                    $('#markAllRead').text(`Mark all as read (${unreadCount})`);
+                    $('#markAllRead').show();
+                } else {
+                    $('#markAllRead').hide();
+                }
+            }
+
+            $('#notifications').html(notificationsHTML);
+
+            // Attach event handler for mark as read buttons
+            $('.mark-read').on('click', function() {
+                const notificationId = $(this).data('id');
+                markNotificationAsRead(notificationId);
+            });
+        }
+
+        function markNotificationAsRead(notificationId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/notifications/${notificationId}/read`,
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        // Update UI
+                        $(`.list-item[data-id="${notificationId}"]`).removeClass('unread');
+                        $(`.mark-read[data-id="${notificationId}"]`).remove();
+
+                        // Reload notifications to update counts
+                        loadNotifications(userId);
+                    }
+                },
+                error: function() {
+                    console.error('Failed to mark notification as read');
+                }
+            });
+        }
+
+        function markAllNotificationsAsRead(userId) {
+            // This is a placeholder. In a real implementation, you would have a backend endpoint
+            // to mark all notifications as read for a user. Here we're simulating it by making
+            // individual calls for each unread notification.
+
+            $('.mark-read').each(function() {
+                const notificationId = $(this).data('id');
+                markNotificationAsRead(notificationId);
+            });
+        }
+
+        function logout() {
             $.ajax({
                 url: 'http://localhost:8080/api/v1/auth/logout',
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`
                 },
-                success: function () {
+                success: function() {
+                    // Clear local storage
                     localStorage.removeItem('token');
                     localStorage.removeItem('role');
+                    localStorage.removeItem('userId');
+
+                    // Redirect to login page
                     window.location.href = 'login.html';
                 },
-                error: function () {
-                    alert('Logout failed. Please try again.');
+                error: function() {
+                    console.error('Failed to logout');
+
+                    // Still clear local storage and redirect
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    localStorage.removeItem('userId');
+                    window.location.href = 'login.html';
                 }
             });
-        });
+        }
     });
 </script>
 </body>

@@ -14,17 +14,17 @@ $(document).ready(function () {
                 if (data.code === 200) {
                     localStorage.setItem('token', data.data.token);
                     localStorage.setItem('role', data.data.role);
+                    localStorage.setItem('email', email); // Ensure this is set
 
                     if (data.data.role === 'ADMIN') {
                         window.location.href = 'admin-dashboard.html';
                     } else {
                         window.location.href = 'user-dashboard.html';
                     }
-                } else {
-                    $('#errorMessage').text(data.message || 'Login failed');
                 }
             },
-            error: function () {
+            error: function (xhr, status, error) {
+                console.error('Login error:', error);
                 $('#errorMessage').text('An error occurred. Please try again.');
             }
         });

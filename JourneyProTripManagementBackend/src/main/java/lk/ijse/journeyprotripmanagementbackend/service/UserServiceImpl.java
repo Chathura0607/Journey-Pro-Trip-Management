@@ -6,9 +6,11 @@ import lk.ijse.journeyprotripmanagementbackend.repo.UserRepository;
 import lk.ijse.journeyprotripmanagementbackend.util.VarList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 @Service
@@ -23,17 +25,24 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     @Override
     public int saveUser(UserDTO userDTO) {
         if (userRepository.existsByEmail(userDTO.getEmail())) {
             return VarList.Not_Acceptable;
         } else {
-            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword())); // Encode the password
-            userDTO.setRole("USER"); // Set default role
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userDTO.setRole("USER");
             userDTO.setCreatedAt(LocalDateTime.now());
             userRepository.save(modelMapper.map(userDTO, User.class));
             return VarList.Created;
         }
+    }
+
+    public String getProfilePicturePath(String filename) {
+        return Paths.get(uploadDir).resolve(filename).toString();
     }
 
     @Override

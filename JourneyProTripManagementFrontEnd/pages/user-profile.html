@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Journey Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .form-group {
+            width: 48%;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            color: #28a745;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>User Profile</h1>
+        <div>
+            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="index.html" class="nav-link">Home</a>
+        </div>
+    </div>
+
+    <div id="successAlert" class="alert alert-success"></div>
+    <div id="errorAlert" class="alert alert-danger"></div>
+
+    <form id="profileForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email (cannot be changed)</label>
+            <input type="email" id="email" name="email" readonly>
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" required>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn">Save Changes</button>
+            <a href="change-password.html" class="btn btn-secondary">Change Password</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        if (!token || role !== 'USER') {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Show loading message and hide profile section
+        $('#loadingMessage').removeClass('hidden');
+        $('#profileSection').addClass('hidden');
+
+        // Load user profile data
+        loadUserProfile();
+
+        // Handle profile form submission
+        $('#profileForm').on('submit', function (e) {
+            e.preventDefault();
+            updateUserProfile();
+        });
+
+        // Handle password form submission
+        $('#passwordForm').on('submit', function (e) {
+            e.preventDefault();
+
+            // Check if passwords match
+            const newPassword = $('#newPassword').val();
+            const confirmPassword = $('#confirmPassword').val();
+
+            if (newPassword !== confirmPassword) {
+                $('#passwordErrorMessage').text('New passwords do not match');
+                $('#passwordSuccessMessage').text('');
+                return;
+            }
+
+            changePassword();
+        });
+
+        // Handle logout
+        $('#logoutButton').on('click', function (e) {
+            e.preventDefault();
+            logout();
+        });
+
+        function loadUserProfile() {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/profile',
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                success: function (response) {
+                    if (response.code === 200) {
+                        // Fill the form with user data
+                        const userData = response.data;
+                        $('#firstName').val(userData.firstName);
+                        $('#lastName').val(userData.lastName);
+                        $('#email').val(userData.email);
+                        $('#phoneNumber').val(userData.phoneNumber);
+                        $('#address').val(userData.address);
+
+                        // Show profile section and hide loading message
+                        $('#loadingMessage').addClass('hidden');
+                        $('#profileSection').removeClass('hidden');
+                    } else {
+                        $('#profileErrorMessage').text(response.message || 'Failed to load profile');
+                    }
+                },
+                error: function () {
+                    $('#profileErrorMessage').text('An error occurred. Please try again.');
+                    $('#loadingMessage').addClass('hidden');
+                }
+            });
+        }
+
+        function updateUserProfile() {
+            const userData = {
+                firstName: $('#firstName').val(),
+                lastName: $('#lastName').val(),
+                email: $('#email').val(),
+                phoneNumber: $('#phoneNumber').val(),
+                address: $('#address').val()
+            };
+
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/profile',
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function (response) {
+                    if (response.code === 200) {
+                        $('#profileSuccessMessage').text('Profile updated successfully');
+                        $('#profileErrorMessage').text('');
+                    } else {
+                        $('#profileErrorMessage').text(response.message || 'Failed to update profile');
+                        $('#profileSuccessMessage').text('');
+                    }
+                },
+                error: function () {
+                    $('#profileErrorMessage').text('An error occurred. Please try again.');
+                    $('#profileSuccessMessage').text('');
+                }
+            });
+        }
+
+        function changePassword() {
+            const passwordData = {
+                oldPassword: $('#oldPassword').val(),
+                newPassword: $('#newPassword').val()
+            };
+
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/change-password',
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(passwordData),
+                success: function (response) {
+                    if (response.code === 201) {
+                        $('#passwordSuccessMessage').text('Password changed successfully');
+                        $('#passwordErrorMessage').text('');
+                        // Reset the form
+                        $('#passwordForm')[0].reset();
+                    } else {
+                        $('#passwordErrorMessage').text(response.message || 'Failed to change password');
+                        $('#passwordSuccessMessage').text('');
+                    }
+                },
+                error: function () {
+                    $('#passwordErrorMessage').text('An error occurred. Please try again.');
+                    $('#passwordSuccessMessage').text('');
+                }
+            });
+        }
+
+        function logout() {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/auth/logout',
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                success: function () {
+                    // Clear local storage and redirect to login page
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    window.location.href = 'login.html';
+                },
+                error: function () {
+                    alert('Logout failed. Please try again.');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

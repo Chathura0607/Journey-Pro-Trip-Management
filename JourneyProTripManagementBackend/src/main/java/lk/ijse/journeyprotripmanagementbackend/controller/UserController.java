@@ -1,19 +1,31 @@
 package lk.ijse.journeyprotripmanagementbackend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ijse.journeyprotripmanagementbackend.dto.ResponseDTO;
 import lk.ijse.journeyprotripmanagementbackend.dto.UserDTO;
 import lk.ijse.journeyprotripmanagementbackend.service.UserService;
 import lk.ijse.journeyprotripmanagementbackend.util.JwtUtil;
 import lk.ijse.journeyprotripmanagementbackend.util.VarList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     @Autowired
@@ -22,8 +34,22 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @PostMapping("/register")
-    public ResponseEntity<ResponseDTO> registerUser(@RequestBody UserDTO userDTO) {
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDTO> registerUser(
+            @RequestPart("userData") String userDataStr,
+            @RequestPart(value = "profilePicture", required = false) MultipartFile file) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserDTO userDTO = objectMapper.readValue(userDataStr, UserDTO.class);
+
+        if (file != null && !file.isEmpty()) {
+            String fileName = storeProfilePicture(file);
+            userDTO.setProfilePicture(fileName);
+        }
+
         int result = userService.saveUser(userDTO);
         if (result == VarList.Created) {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -32,6 +58,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResponseDTO(VarList.Not_Acceptable, "User already exists", null));
         }
+    }
+
+    private String storeProfilePicture(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        return fileName;
     }
 
     @GetMapping("/search")

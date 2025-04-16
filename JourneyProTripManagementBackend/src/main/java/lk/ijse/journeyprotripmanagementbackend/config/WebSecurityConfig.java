@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -42,21 +43,16 @@ public class WebSecurityConfig {
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/v1/auth/authenticate", // Login endpoint
-                                "/api/v1/auth/logout",
-                                "/api/v1/user/register", // User registration endpoint
-                                "/v3/api-docs/**", // Swagger API docs
-                                "/swagger-ui/**", // Swagger UI
-                                "/swagger-ui.html" // Swagger UI HTML
-                        ).permitAll() // Allow these endpoints without authentication
-                        .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN") // Admin-only endpoints
-                        .requestMatchers("/api/v1/user/**").hasAuthority("USER")  // User-only endpoints
-                        .anyRequest().authenticated() // All other endpoints require authentication
-                )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
+        return http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults()).authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/authenticate", // Login endpoint
+                                        "/api/v1/auth/logout", "/api/v1/user/register", // User registration endpoint
+                                        "/v3/api-docs/**", // Swagger API docs
+                                        "/swagger-ui/**", // Swagger UI
+                                        "/swagger-ui.html" // Swagger UI HTML
+                                ).permitAll() // Allow these endpoints without authentication
+                                .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN") // Admin-only endpoints
+                                .requestMatchers("/api/v1/user/**").hasAuthority("USER")  // User-only endpoints
+                                .anyRequest().authenticated() // All other endpoints require authentication
+                ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
                 .build();
     }

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/login_style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Register</title>
+    <style>
+        .profile-picture-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-picture-preview {
+            width: 115px;
+            height: 115px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007bff;
+            cursor: pointer;
+        }
+        .profile-picture-input {
+            display: none;
+        }
+        .upload-icon {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            padding: 5px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .picture-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .password-input-group {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<div class="d-lg-flex half">
+    <div class="bg order-1 order-md-2" style="background-image: url('../img/bg_1.jpg');"></div>
+    <div class="contents order-2 order-md-1">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-7">
+                    <h3>Register to <strong>Journey Pro</strong></h3>
+                    <p>Create your account to start your journey</p>
+
+                    <div id="alertMessage" class="alert d-none"></div>
+
+                    <form id="registerForm" enctype="multipart/form-data">
+                        <div class="profile-picture-container">
+                            <div class="picture-wrapper">
+                                <img id="profilePreview" src="/img/default-profile.png" class="profile-picture-preview">
+                                <div class="upload-icon" onclick="document.getElementById('profilePicture').click()">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <input type="file" id="profilePicture" name="profilePicture" class="profile-picture-input" accept="image/*">
+                            </div>
+                        </div>
+
+                        <div class="form-group first">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" placeholder="John" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Doe" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="your-email@gmail.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="password-input-group">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Your Password" required>
+                                <span class="password-toggle" onclick="togglePassword()">
+                                    <i class="fas fa-eye-slash"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="+94 76 123 4567">
+                        </div>
+
+                        <div class="form-group last mb-3">
+                            <label for="address">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="2" placeholder="123 Main St, Colombo"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-block btn-primary">Register</button>
+
+                        <div class="text-center mt-3">
+                            <p>Already have an account? <a href="login.html">Login here</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Profile picture preview
+        $('#profilePicture').change(function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#profilePreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Form submission
+        $('#registerForm').submit(function(e){
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('userData', JSON.stringify({
+                firstName: $('#firstName').val(),
+                lastName: $('#lastName').val(),
+                email: $('#email').val(),
+                password: $('#password').val(),
+                phoneNumber: $('#phoneNumber').val(),
+                address: $('#address').val()
+            }));
+
+            const profilePic = $('#profilePicture')[0].files[0];
+            if (profilePic) {
+                formData.append('profilePicture', profilePic);
+            }
+
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/register',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    showAlert('Registration successful! Redirecting to login...', 'success');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                },
+                error: function(xhr) {
+                    const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Registration failed';
+                    showAlert(errorMsg, 'danger');
+                }
+            });
+        });
+
+        function showAlert(message, type) {
+            const alert = $('#alertMessage');
+            alert.removeClass('d-none alert-success alert-danger')
+                .addClass(`alert-${type}`)
+                .html(`<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`);
+        }
+    });
+
+    function togglePassword() {
+        const passwordField = $('#password');
+        const icon = $('.password-toggle i');
+
+        if (passwordField.attr('type') === 'password') {
+            passwordField.attr('type', 'text');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        } else {
+            passwordField.attr('type', 'password');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        }
+    }
+</script>
+</body>
+</html>
