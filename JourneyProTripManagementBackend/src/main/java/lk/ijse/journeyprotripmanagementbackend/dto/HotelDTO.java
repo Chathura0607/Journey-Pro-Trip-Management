@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HotelDTO {
+    private String id;
     private String name;
     private String location;
     private Double rating;

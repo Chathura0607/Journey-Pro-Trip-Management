@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface HotelRepository extends JpaRepository<Hotel, UUID> {
     List<Hotel> findByLocationContainingIgnoreCase(String location);
+    boolean existsByNameAndLocation(String name, String location);
 }

@@ -7,6 +7,7 @@ import lk.ijse.journeyprotripmanagementbackend.util.VarList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class HotelServiceImpl implements HotelService {
 
     @Autowired
@@ -23,41 +25,94 @@ public class HotelServiceImpl implements HotelService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<HotelDTO> getAllHotels() {
-        // Fetch all hotels from the database
-        List<Hotel> hotels = hotelRepository.findAll();
+    public String saveHotel(HotelDTO hotelDTO) {
+        try {
+            // Check for duplicate hotel
+            if (hotelRepository.existsByNameAndLocation(hotelDTO.getName(), hotelDTO.getLocation())) {
+                return String.valueOf(VarList.Duplicate_Entry);
+            }
 
-        // Map hotels to HotelDTO
+            // Map DTO to entity and save
+            Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
+            hotelRepository.save(hotel);
+            return String.valueOf(VarList.OK);
+        } catch (Exception e) {
+            return String.valueOf(VarList.Internal_Server_Error);
+        }
+    }
+
+    @Override
+    public String updateHotel(HotelDTO hotelDTO) {
+        try {
+            // Check if hotel exists
+            Optional<Hotel> optionalHotel = hotelRepository.findById(UUID.fromString(hotelDTO.getId()));
+            if (optionalHotel.isEmpty()) {
+                return String.valueOf(VarList.Not_Found);
+            }
+
+            // Update the hotel
+            Hotel hotel = optionalHotel.get();
+            hotel.setName(hotelDTO.getName());
+            hotel.setLocation(hotelDTO.getLocation());
+            hotel.setRating(hotelDTO.getRating());
+            hotel.setContactInfo(hotelDTO.getContactInfo());
+
+            hotelRepository.save(hotel);
+            return String.valueOf(VarList.OK);
+        } catch (Exception e) {
+            return String.valueOf(VarList.Internal_Server_Error);
+        }
+    }
+
+    @Override
+    public String deleteHotel(String hotelId) {
+        try {
+            // Check if hotel exists
+            Optional<Hotel> optionalHotel = hotelRepository.findById(UUID.fromString(hotelId));
+            if (optionalHotel.isEmpty()) {
+                return String.valueOf(VarList.Not_Found);
+            }
+
+            // Delete the hotel
+            hotelRepository.deleteById(UUID.fromString(hotelId));
+            return String.valueOf(VarList.OK);
+        } catch (Exception e) {
+            return String.valueOf(VarList.Internal_Server_Error);
+        }
+    }
+
+    @Override
+    public List<HotelDTO> getAllHotels() {
+        List<Hotel> hotels = hotelRepository.findAll();
         return hotels.stream()
-                .map(hotel -> modelMapper.map(hotel, HotelDTO.class))
+                .map(hotel -> {
+                    HotelDTO dto = modelMapper.map(hotel, HotelDTO.class);
+                    dto.setId(hotel.getId().toString());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     public HotelDTO getHotelById(String hotelId) {
-        // Convert the hotelId from String to UUID
-        UUID uuid = UUID.fromString(hotelId);
-
-        // Find the hotel by ID
-        Optional<Hotel> optionalHotel = hotelRepository.findById(uuid);
-
-        // If the hotel exists, map it to HotelDTO and return
+        Optional<Hotel> optionalHotel = hotelRepository.findById(UUID.fromString(hotelId));
         if (optionalHotel.isPresent()) {
-            Hotel hotel = optionalHotel.get();
-            return modelMapper.map(hotel, HotelDTO.class);
-        } else {
-            return null; // Hotel not found
+            HotelDTO dto = modelMapper.map(optionalHotel.get(), HotelDTO.class);
+            dto.setId(optionalHotel.get().getId().toString());
+            return dto;
         }
+        return null;
     }
 
     @Override
     public List<HotelDTO> searchHotelsByLocation(String location) {
-        // Fetch hotels by location
         List<Hotel> hotels = hotelRepository.findByLocationContainingIgnoreCase(location);
-
-        // Map hotels to HotelDTO
         return hotels.stream()
-                .map(hotel -> modelMapper.map(hotel, HotelDTO.class))
+                .map(hotel -> {
+                    HotelDTO dto = modelMapper.map(hotel, HotelDTO.class);
+                    dto.setId(hotel.getId().toString());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 }
