@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Trip - Journey Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .form-group {
+            width: 48%;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            color: #28a745;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Create New Trip</h1>
+        <div>
+            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="trip-list.html" class="nav-link">My Trips</a>
+        </div>
+    </div>
+
+    <div id="successAlert" class="alert alert-success"></div>
+    <div id="errorAlert" class="alert alert-danger"></div>
+
+    <form id="createTripForm">
+        <div class="form-group">
+            <label for="destination">Destination</label>
+            <input type="text" id="destination" name="destination" required>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" name="startDate" required>
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" name="endDate" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn">Create Trip</button>
+            <a href="trip-list.html" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        if (!token || role !== 'USER') {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Get user information from token
+        const userInfo = JSON.parse(atob(token.split('.')[1]));
+        const userEmail = userInfo.sub; // Assuming the subject contains the user's email
+
+        // Set minimum date for date inputs to today
+        const today = new Date().toISOString().split('T')[0];
+        $('#startDate').attr('min', today);
+        $('#endDate').attr('min', today);
+
+        // Handle start date change to ensure end date is not before start date
+        $('#startDate').on('change', function () {
+            const startDate = $(this).val();
+            $('#endDate').attr('min', startDate);
+
+            // If end date is before start date, set end date to start date
+            if ($('#endDate').val() < startDate) {
+                $('#endDate').val(startDate);
+            }
+        });
+
+        // Handle form submission
+        $('#createTripForm').on('submit', function (e) {
+            e.preventDefault();
+
+            // Hide previous messages
+            $('#errorMessage').hide();
+            $('#successMessage').hide();
+
+            // Get form values
+            const destination = $('#destination').val();
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+
+            // Validate dates
+            if (new Date(startDate) > new Date(endDate)) {
+                $('#errorMessage').text('End date cannot be before start date').show();
+                return;
+            }
+
+            // Prepare trip data
+            const tripData = {
+                userId: getUserId(), // You need to implement this function based on how you store user ID
+                destination: destination,
+                startDate: startDate,
+                endDate: endDate
+            };
+
+            // Send create trip request
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/trips/create',
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(tripData),
+                success: function (response) {
+                    if (response.code === 201) {
+                        $('#successMessage').text('Trip created successfully! Redirecting to your trips...').show();
+
+                        // Clear form
+                        $('#createTripForm')[0].reset();
+
+                        // Redirect to trips list after 2 seconds
+                        setTimeout(function () {
+                            window.location.href = 'trip-list.html';
+                        }, 2000);
+                    } else {
+                        $('#errorMessage').text(response.message || 'Failed to create trip').show();
+                    }
+                },
+                error: function (xhr) {
+                    let errorMessage = 'An error occurred. Please try again.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    $('#errorMessage').text(errorMessage).show();
+                }
+            });
+        });
+
+        // Handle logout
+        $('#logoutButton').on('click', function (e) {
+            e.preventDefault();
+            logout();
+        });
+
+        // Helper function to get user ID - you may need to adjust this based on your implementation
+        function getUserId() {
+            // In a real app, you might store the user ID in localStorage or extract it from the JWT token
+            // For this example, we'll use a simplified approach by making a separate request
+
+            // Find user by email
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/search?email=${userEmail}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                async: false,
+                success: function (response) {
+                    if (response.code === 200 && response.data) {
+                        userId = response.data.id;
+                    }
+                }
+            });
+
+            return userId;
+        }
+
+        // Logout function
+        function logout() {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/auth/logout',
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                success: function () {
+                    // Clear local storage and redirect to login page
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    window.location.href = 'login.html';
+                },
+                error: function () {
+                    alert('Logout failed. Please try again.');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Trip - Journey Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-row .form-group {
+            width: 48%;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            color: #28a745;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Edit Trip</h1>
+        <div>
+            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+            <a id="backToTrip" href="#" class="nav-link">Back to Trip</a>
+        </div>
+    </div>
+
+    <div id="successAlert" class="alert alert-success"></div>
+    <div id="errorAlert" class="alert alert-danger"></div>
+
+    <form id="editTripForm">
+        <div class="form-group">
+            <label for="destination">Destination</label>
+            <input type="text" id="destination" name="destination" required>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" name="startDate" required>
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" name="endDate" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn">Save Changes</button>
+            <a id="cancelBtn" href="#" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        if (!token || role !== 'USER') {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Get trip ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tripId = urlParams.get('id');
+
+        if (!tripId) {
+            showError('Trip ID is missing');
+            setTimeout(() => {
+                window.location.href = 'trip-list.html';
+            }, 2000);
+            return;
+        }
+
+        // Set up back and cancel links
+        $('#backToTrip, #cancelBtn').attr('href', `trip-details.html?id=${tripId}`);
+
+        // Get user ID (placeholder)
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = "current-user";
+        }
+
+        // Load trip details
+        loadTripDetails(tripId);
+
+        // Handle form submission
+        $('#editTripForm').on('submit', function(e) {
+            e.preventDefault();
+            updateTrip(tripId);
+        });
+
+        function loadTripDetails(tripId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/trips/${tripId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const trip = response.data;
+
+                        // Fill form with trip details
+                        $('#destination').val(trip.destination);
+
+                        // Format dates for input fields (YYYY-MM-DD)
+                        const startDate = new Date(trip.startDate);
+                        const endDate = new Date(trip.endDate);
+
+                        const formattedStartDate = startDate.toISOString().split('T')[0];
+                        const formattedEndDate = endDate.toISOString().split('T')[0];
+
+                        $('#startDate').val(formattedStartDate);
+                        $('#endDate').val(formattedEndDate);
+
+                        // Set minimum date for end date based on start date
+                        $('#startDate').on('change', function() {
+                            $('#endDate').attr('min', $(this).val());
+
+                            // If end date is before start date, reset it
+                            if ($('#endDate').val() < $(this).val()) {
+                                $('#endDate').val($(this).val());
+                            }
+                        });
+                    } else {
+                        showError(response.message || 'Failed to load trip details');
+                    }
+                },
+                error: function() {
+                    showError('An error occurred while loading trip details');
+                }
+            });
+        }
+
+        function updateTrip(tripId) {
+            const tripData = {
+                userId: userId,
+                destination: $('#destination').val(),
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val()
+            };
+
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/trips/${tripId}`,
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(tripData),
+                success: function(response) {
+                    if (response.code === 200) {
+                        showSuccess('Trip updated successfully');
+
+                        // Redirect to trip details after a delay
+                        setTimeout(function() {
+                            window.location.href = `trip-details.html?id=${tripId}`;
+                        }, 2000);
+                    } else {
+                        showError(response.message || 'Failed to update trip');
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'An error occurred while updating the trip';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showError(errorMessage);
+                }
+            });
+        }
+
+        function showSuccess(message) {
+            $('#successAlert').text(message).show();
+            $('#errorAlert').hide();
+        }
+
+        function showError(message) {
+            $('#errorAlert').text(message).show();
+            $('#successAlert').hide();
+        }
+    });
+</script>
+</body>
+</html>
