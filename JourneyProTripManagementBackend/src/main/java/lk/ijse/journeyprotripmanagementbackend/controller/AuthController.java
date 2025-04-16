@@ -27,6 +27,9 @@ public class AuthController {
         ResponseDTO responseDTO = new ResponseDTO();
         try {
             AuthDTO authDTO = authService.login(userDTO.getEmail(), userDTO.getPassword());
+            // Include email in the response
+            authDTO.setEmail(userDTO.getEmail());
+
             responseDTO.setCode(VarList.OK);
             responseDTO.setMessage("Login successful");
             responseDTO.setData(authDTO);
@@ -36,7 +39,6 @@ public class AuthController {
             responseDTO.setCode(VarList.Internal_Server_Error);
             responseDTO.setMessage("An error occurred: " + e.getMessage());
             responseDTO.setData(null);
-
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDTO);
         }
     }

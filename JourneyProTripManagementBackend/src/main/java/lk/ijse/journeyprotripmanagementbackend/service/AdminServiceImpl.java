@@ -5,9 +5,11 @@ import lk.ijse.journeyprotripmanagementbackend.entity.Admin;
 import lk.ijse.journeyprotripmanagementbackend.repo.AdminRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,13 +22,21 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public String addAdmin(AdminDTO adminDTO) {
-        if (adminRepository.existsByEmail(adminDTO.getEmail())) {
+        if (existsByEmail(adminDTO.getEmail())) {
             return "01"; // Admin already exists
         }
+
+        adminDTO.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
+        adminDTO.setCreatedAt(LocalDateTime.now());
+
         Admin admin = modelMapper.map(adminDTO, Admin.class);
         adminRepository.save(admin);
+
         return "00"; // Success
     }
 
