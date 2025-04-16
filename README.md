@@ -133,8 +133,4 @@ A comprehensive travel and trip management platform built using **HTML**, **CSS*
 
 📧 **Email**: [chathuhiru45@gmail.com](mailto:chathuhiru45@gmail.com)  
 🐙 **GitHub**: [Chathura0607](https://github.com/Chathura0607)  
-💼 **LinkedIn**: [Your LinkedIn](https://linkedin.com/in/your-profile)
-
-> 🔁 Replace `"your-profile"` with your actual LinkedIn profile URL.
-
 ---
