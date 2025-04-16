@@ -55,4 +55,5 @@ public class VarList {
     public static final int Loop_Detected = 508;
     public static final int Not_Extended = 510;
     public static final int Network_Authentication_Required = 511;
+    public static final int Duplicate_Entry = 409;
 }

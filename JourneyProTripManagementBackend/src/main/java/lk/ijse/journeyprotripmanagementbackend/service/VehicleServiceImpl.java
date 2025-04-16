@@ -8,6 +8,7 @@ import lk.ijse.journeyprotripmanagementbackend.util.VarList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class VehicleServiceImpl implements VehicleService {
 
     @Autowired
@@ -24,44 +26,79 @@ public class VehicleServiceImpl implements VehicleService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<VehicleDTO> getAllVehicles() {
-        // Fetch all vehicles from the database
-        List<Vehicle> vehicles = vehicleRepository.findAll();
+    public String saveVehicle(VehicleDTO vehicleDTO) {
+        if (vehicleRepository.existsByRegistrationNumber(vehicleDTO.getRegistrationNumber())) {
+            return "Vehicle with this registration number already exists";
+        }
 
-        // Map vehicles to VehicleDTO
-        return vehicles.stream()
-                .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class))
+        Vehicle vehicle = modelMapper.map(vehicleDTO, Vehicle.class);
+        vehicleRepository.save(vehicle);
+        return String.valueOf(VarList.OK);
+    }
+
+    @Override
+    public String updateVehicle(VehicleDTO vehicleDTO) {
+        Optional<Vehicle> optionalVehicle = vehicleRepository.findById(UUID.fromString(vehicleDTO.getId()));
+        if (optionalVehicle.isEmpty()) {
+            return "Vehicle not found";
+        }
+
+        Vehicle existingVehicle = vehicleRepository.findByRegistrationNumber(vehicleDTO.getRegistrationNumber());
+        if (existingVehicle != null && !existingVehicle.getId().toString().equals(vehicleDTO.getId())) {
+            return "Another vehicle with this registration number already exists";
+        }
+
+        Vehicle vehicle = optionalVehicle.get();
+        vehicle.setVehicleType(vehicleDTO.getVehicleType());
+        vehicle.setModel(vehicleDTO.getModel());
+        vehicle.setRegistrationNumber(vehicleDTO.getRegistrationNumber());
+        vehicle.setSeatCapacity(vehicleDTO.getSeatCapacity());
+        vehicle.setIsAvailable(vehicleDTO.getIsAvailable());
+
+        vehicleRepository.save(vehicle);
+        return String.valueOf(VarList.OK);
+    }
+
+    @Override
+    public String deleteVehicle(String vehicleId) {
+        Optional<Vehicle> optionalVehicle = vehicleRepository.findById(UUID.fromString(vehicleId));
+        if (optionalVehicle.isEmpty()) {
+            return "Vehicle not found";
+        }
+
+        vehicleRepository.deleteById(UUID.fromString(vehicleId));
+        return String.valueOf(VarList.OK);
+    }
+
+    @Override
+    public List<VehicleDTO> getAllVehicles() {
+        return vehicleRepository.findAll().stream()
+                .map(vehicle -> {
+                    VehicleDTO dto = modelMapper.map(vehicle, VehicleDTO.class);
+                    dto.setId(vehicle.getId().toString());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     public VehicleDTO getVehicleById(String vehicleId) {
-        // Convert the vehicleId from String to UUID
-        UUID uuid = UUID.fromString(vehicleId);
-
-        // Find the vehicle by ID
-        Optional<Vehicle> optionalVehicle = vehicleRepository.findById(uuid);
-
-        // If the vehicle exists, map it to VehicleDTO and return
-        if (optionalVehicle.isPresent()) {
-            Vehicle vehicle = optionalVehicle.get();
-            return modelMapper.map(vehicle, VehicleDTO.class);
-        } else {
-            return null; // Vehicle not found
-        }
+        return vehicleRepository.findById(UUID.fromString(vehicleId))
+                .map(vehicle -> {
+                    VehicleDTO dto = modelMapper.map(vehicle, VehicleDTO.class);
+                    dto.setId(vehicle.getId().toString());
+                    return dto;
+                }).orElse(null);
     }
 
     @Override
     public List<VehicleDTO> searchVehiclesByType(String type) {
-        // Convert the type to VehicleType enum
         VehicleType vehicleType = VehicleType.valueOf(type.toUpperCase());
-
-        // Fetch vehicles by type
-        List<Vehicle> vehicles = vehicleRepository.findByVehicleType(vehicleType);
-
-        // Map vehicles to VehicleDTO
-        return vehicles.stream()
-                .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class))
-                .collect(Collectors.toList());
+        return vehicleRepository.findByVehicleType(vehicleType).stream()
+                .map(vehicle -> {
+                    VehicleDTO dto = modelMapper.map(vehicle, VehicleDTO.class);
+                    dto.setId(vehicle.getId().toString());
+                    return dto;
+                }).collect(Collectors.toList());
     }
 }
