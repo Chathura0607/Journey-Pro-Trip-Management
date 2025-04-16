@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Booking - Journey Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .option-group {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            color: #28a745;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .price-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #28a745;
+        }
+
+        .card {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card.selected {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Create Booking</h1>
+        <div>
+            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+            <a id="backToTrip" href="#" class="nav-link">Back to Trip</a>
+        </div>
+    </div>
+
+    <div id="successAlert" class="alert alert-success"></div>
+    <div id="errorAlert" class="alert alert-danger"></div>
+
+    <form id="createBookingForm">
+        <div class="form-group">
+            <label for="tripInfo">Trip Information</label>
+            <input type="text" id="tripInfo" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="bookingType">Booking Type</label>
+            <select id="bookingType" name="bookingType" required>
+                <option value="">Select Booking Type</option>
+                <option value="HOTEL">Hotel</option>
+                <option value="BUS">Bus</option>
+                <option value="VEHICLE">Vehicle</option>
+            </select>
+        </div>
+
+        <!-- Hotel Options -->
+        <div id="hotelOptions" class="option-group">
+            <h2>Select a Hotel</h2>
+            <div id="hotelList"></div>
+            <input type="hidden" id="hotelId" name="hotelId">
+        </div>
+
+        <!-- Bus Options -->
+        <div id="busOptions" class="option-group">
+            <h2>Select a Bus</h2>
+            <div id="busList"></div>
+            <input type="hidden" id="busId" name="busId">
+        </div>
+
+        <!-- Vehicle Options -->
+        <div id="vehicleOptions" class="option-group">
+            <h2>Select a Vehicle</h2>
+            <div id="vehicleList"></div>
+            <input type="hidden" id="vehicleId" name="vehicleId">
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount ($)</label>
+            <input type="number" id="amount" name="amount" step="0.01" min="0" required>
+            <div id="priceDisplay" class="price-display"></div>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn">Create Booking</button>
+            <a id="cancelBtn" href="#" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        if (!token || role !== 'USER') {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Get trip ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tripId = urlParams.get('tripId');
+
+        if (!tripId) {
+            showError('Trip ID is missing');
+            setTimeout(() => {
+                window.location.href = 'trip-list.html';
+            }, 2000);
+            return;
+        }
+
+        // Set up back and cancel links
+        $('#backToTrip, #cancelBtn').attr('href', `trip-details.html?id=${tripId}`);
+
+        // Get user ID (placeholder)
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = "current-user";
+        }
+
+        // Load trip details
+        loadTripDetails(tripId);
+
+        // Handle booking type changes
+        $('#bookingType').on('change', function() {
+            const bookingType = $(this).val();
+
+            // Hide all option groups
+            $('.option-group').hide();
+
+            // Show selected option group
+            if (bookingType === 'HOTEL') {
+                $('#hotelOptions').show();
+                loadHotels();
+            } else if (bookingType === 'BUS') {
+                $('#busOptions').show();
+                loadBuses();
+            } else if (bookingType === 'VEHICLE') {
+                $('#vehicleOptions').show();
+                loadVehicles();
+            }
+        });
+
+        // Handle form submission
+        $('#createBookingForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const bookingType = $('#bookingType').val();
+
+            if (!bookingType) {
+                showError('Please select a booking type');
+                return;
+            }
+
+            // Validate selection based on booking type
+            if (bookingType === 'HOTEL' && !$('#hotelId').val()) {
+                showError('Please select a hotel');
+                return;
+            } else if (bookingType === 'BUS' && !$('#busId').val()) {
+                showError('Please select a bus');
+                return;
+            } else if (bookingType === 'VEHICLE' && !$('#vehicleId').val()) {
+                showError('Please select a vehicle');
+                return;
+            }
+
+            // Create booking data
+            const bookingData = {
+                userId: userId,
+                tripId: tripId,
+                bookingType: bookingType,
+                amount: parseFloat($('#amount').val())
+            };
+
+            // Add specific booking details based on type
+            if (bookingType === 'HOTEL') {
+                bookingData.hotelId = $('#hotelId').val();
+            } else if (bookingType === 'BUS') {
+                bookingData.busId = $('#busId').val();
+            } else if (bookingType === 'VEHICLE') {
+                bookingData.vehicleId = $('#vehicleId').val();
+            }
+
+            // Submit booking
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/bookings',
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(bookingData),
+                success: function(response) {
+                    if (response.code === 201) {
+                        showSuccess('Booking created successfully');
+
+                        // Redirect to trip details after a delay
+                        setTimeout(function() {
+                            window.location.href = `trip-details.html?id=${tripId}`;
+                        }, 2000);
+                    } else {
+                        showError(response.message || 'Failed to create booking');
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'An error occurred while creating the booking';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showError(errorMessage);
+                }
+            });
+        });
+
+        function loadTripDetails(tripId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/trips/${tripId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const trip = response.data;
+
+                        // Format dates
+                        const startDate = new Date(trip.startDate).toLocaleDateString();
+                        const endDate = new Date(trip.endDate).toLocaleDateString();
+
+                        // Update trip info
+                        $('#tripInfo').val(`${trip.destination} (${startDate} - ${endDate})`);
+                    } else {
+                        showError(response.message || 'Failed to load trip details');
+                    }
+                },
+                error: function() {
+                    showError('An error occurred while loading trip details');
+                }
+            });
+        }
+
+        function loadHotels() {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/admin/hotels',
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        displayHotels(response.data);
+                    } else {
+                        $('#hotelList').html('<div class="no-items">Failed to load hotels.</div>');
+                    }
+                },
+                error: function() {
+                    $('#hotelList').html('<div class="no-items">An error occurred while loading hotels.</div>');
+                }
+            });
+        }
+
+        function displayHotels(hotels) {
+            let hotelsHTML = '';
+
+            if (!hotels || hotels.length === 0) {
+                hotelsHTML = '<div class="no-items">No hotels available.</div>';
+            } else {
+                hotels.forEach(hotel => {
+                    const ratingStars = '★'.repeat(Math.floor(hotel.rating)) + '☆'.repeat(5 - Math.floor(hotel.rating));
+
+                    hotelsHTML += `
+                            <div class="card hotel-card" data-id="${hotel.id}" data-price="150.00">
+                                <div class="card-header">
+                                    <div>${hotel.name}</div>
+                                    <div style="color: gold;">${ratingStars}</div>
+                                </div>
+                                <div>
+                                    <strong>Location:</strong> ${hotel.location}<br>
+                                    <strong>Contact:</strong> ${hotel.contactInfo}<br>
+                                    <strong>Price:</strong> $150.00 per night
+                                </div>
+                            </div>
+                        `;
+                });
+            }
+
+            $('#hotelList').html(hotelsHTML);
+
+            // Add click handlers for hotel selection
+            $('.hotel-card').on('click', function() {
+                $('.hotel-card').removeClass('selected');
+                $(this).addClass('selected');
+
+                const hotelId = $(this).data('id');
+                const price = $(this).data('price');
+
+                $('#hotelId').val(hotelId);
+                $('#amount').val(price);
+                $('#priceDisplay').text(`Total: $${price.toFixed(2)}`);
+            });
+        }
+
+        function loadBuses() {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/admin/buses',
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        displayBuses(response.data);
+                    } else {
+                        $('#busList').html('<div class="no-items">Failed to load buses.</div>');
+                    }
+                },
+                error: function() {
+                    $('#busList').html('<div class="no-items">An error occurred while loading buses.</div>');
+                }
+            });
+        }
+
+        function displayBuses(buses) {
+            let busesHTML = '';
+
+            if (!buses || buses.length === 0) {
+                busesHTML = '<div class="no-items">No buses available.</div>';
+            } else {
+                buses.forEach(bus => {
+                    const price = 35.00; // Placeholder price
+
+                    busesHTML += `
+                            <div class="card bus-card" data-id="${bus.id}" data-price="${price}">
+                                <div class="card-header">
+                                    <div>Bus #${bus.busNumber}</div>
+                                    <div>${bus.availableSeats} seats available</div>
+                                </div>
+                                <div>
+                                    <strong>Route:</strong> ${bus.route}<br>
+                                    <strong>Departure:</strong> ${bus.departureTime}<br>
+                                    <strong>Arrival:</strong> ${bus.arrivalTime}<br>
+                                    <strong>Price:</strong> $${price.toFixed(2)} per person
+                                </div>
+                            </div>
+                        `;
+                });
+            }
+
+            $('#busList').html(busesHTML);
+
+            // Add click handlers for bus selection
+            $('.bus-card').on('click', function() {
+                $('.bus-card').removeClass('selected');
+                $(this).addClass('selected');
+
+                const busId = $(this).data('id');
+                const price = $(this).data('price');
+
+                $('#busId').val(busId);
+                $('#amount').val(price);
+                $('#priceDisplay').text(`Total: $${price.toFixed(2)}`);
+            });
+        }
+
+        function loadVehicles() {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/admin/vehicles',
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        displayVehicles(response.data);
+                    } else {
+                        $('#vehicleList').html('<div class="no-items">Failed to load vehicles.</div>');
+                    }
+                },
+                error: function() {
+                    $('#vehicleList').html('<div class="no-items">An error occurred while loading vehicles.</div>');
+                }
+            });
+        }
+
+        function displayVehicles(vehicles) {
+            let vehiclesHTML = '';
+
+            if (!vehicles || vehicles.length === 0) {
+                vehiclesHTML = '<div class="no-items">No vehicles available.</div>';
+            } else {
+                // Filter out vehicles that are not available
+                const availableVehicles = vehicles.filter(vehicle => vehicle.isAvailable);
+
+                if (availableVehicles.length === 0) {
+                    vehiclesHTML = '<div class="no-items">No vehicles currently available.</div>';
+                } else {
+                    availableVehicles.forEach(vehicle => {
+                        // Set price based on vehicle type
+                        let price = 0;
+                        switch(vehicle.vehicleType) {
+                            case 'CAR':
+                                price = 75.00;
+                                break;
+                            case 'VAN':
+                                price = 120.00;
+                                break;
+                            case 'BIKE':
+                                price = 35.00;
+                                break;
+                            case 'SUV':
+                                price = 95.00;
+                                break;
+                            default:
+                                price = 80.00;
+                        }
+
+                        vehiclesHTML += `
+                                <div class="card vehicle-card" data-id="${vehicle.id}" data-price="${price}">
+                                    <div class="card-header">
+                                        <div>${vehicle.model} (${vehicle.vehicleType})</div>
+                                        <div>${vehicle.seatCapacity} seats</div>
+                                    </div>
+                                    <div>
+                                        <strong>Registration:</strong> ${vehicle.registrationNumber}<br>
+                                        <strong>Type:</strong> ${vehicle.vehicleType}<br>
+                                        <strong>Price:</strong> $${price.toFixed(2)} per day
+                                    </div>
+                                </div>
+                            `;
+                    });
+                }
+            }
+
+            $('#vehicleList').html(vehiclesHTML);
+
+            // Add click handlers for vehicle selection
+            $('.vehicle-card').on('click', function() {
+                $('.vehicle-card').removeClass('selected');
+                $(this).addClass('selected');
+
+                const vehicleId = $(this).data('id');
+                const price = $(this).data('price');
+
+                $('#vehicleId').val(vehicleId);
+                $('#amount').val(price);
+                $('#priceDisplay').text(`Total: $${price.toFixed(2)}`);
+            });
+        }
+
+        function showSuccess(message) {
+            $('#successAlert').text(message).show();
+            $('#errorAlert').hide();
+        }
+
+        function showError(message) {
+            $('#errorAlert').text(message).show();
+            $('#successAlert').hide();
+        }
+    });
+</script>
+</body>
+</html>

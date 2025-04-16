@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Journey Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #28a745;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-view {
+            background-color: #17a2b8;
+        }
+
+        .btn-view:hover {
+            background-color: #138496;
+        }
+
+        .btn-pay {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-pay:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+
+        .alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            color: #28a745;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-group label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .filter-group select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .search-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-group input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .booking-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .booking-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .booking-type {
+            padding: 10px;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .hotel {
+            background-color: #4caf50;
+        }
+
+        .bus {
+            background-color: #2196f3;
+        }
+
+        .vehicle {
+            background-color: #ff9800;
+        }
+
+        .booking-details {
+            padding: 15px;
+        }
+
+        .booking-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .booking-info {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .booking-info .label {
+            color: #6c757d;
+        }
+
+        .booking-status {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-confirmed {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-canceled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .booking-actions {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .no-bookings {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .pagination-btn.active {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .pagination-btn:hover:not(.active) {
+            background-color: #f4f4f4;
+        }
+
+        @media (max-width: 768px) {
+            .booking-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .filter-group, .search-group {
+                width: 100%;
+            }
+
+            .search-group input {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>My Bookings</h1>
+        <div>
+            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="trip-list.html" class="nav-link">My Trips</a>
+        </div>
+    </div>
+
+    <div id="successAlert" class="alert alert-success"></div>
+    <div id="errorAlert" class="alert alert-danger"></div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="typeFilter">Type:</label>
+            <select id="typeFilter">
+                <option value="all">All Types</option>
+                <option value="HOTEL">Hotel</option>
+                <option value="BUS">Bus</option>
+                <option value="VEHICLE">Vehicle</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="statusFilter">Status:</label>
+            <select id="statusFilter">
+                <option value="all">All Statuses</option>
+                <option value="CONFIRMED">Confirmed</option>
+                <option value="CANCELED">Canceled</option>
+            </select>
+        </div>
+
+        <div class="search-group">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button class="btn" id="searchBtn">Search</button>
+        </div>
+    </div>
+
+    <div id="bookingsContainer" class="booking-cards">
+        <div class="no-bookings">Loading bookings...</div>
+    </div>
+
+    <div class="pagination" id="pagination">
+        <!-- Pagination buttons will be added here -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../js/api-client.js"></script>
+<script>
+    $(document).ready(function() {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        if (!token || role !== 'USER') {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Get user ID
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = "current-user";
+        }
+
+        // Pagination variables
+        const itemsPerPage = 6;
+        let currentPage = 1;
+        let filteredBookings = [];
+
+        // Load bookings
+        loadBookings(userId);
+
+        // Handle filters
+        $('#typeFilter, #statusFilter').on('change', function() {
+            applyFilters();
+        });
+
+        // Handle search
+        $('#searchBtn').on('click', function() {
+            applyFilters();
+        });
+
+        $('#searchInput').on('keypress', function(e) {
+            if (e.which === 13) {
+                applyFilters();
+            }
+        });
+
+        function loadBookings(userId) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/user/bookings?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const bookings = response.data || [];
+
+                        // Store all bookings and apply initial filters
+                        filteredBookings = bookings;
+                        applyFilters();
+                    } else {
+                        $('#bookingsContainer').html('<div class="no-bookings">Failed to load bookings.</div>');
+                    }
+                },
+                error: function() {
+                    $('#bookingsContainer').html('<div class="no-bookings">An error occurred while loading bookings.</div>');
+                }
+            });
+        }
+
+        function applyFilters() {
+            const typeFilter = $('#typeFilter').val();
+            const statusFilter = $('#statusFilter').val();
+            const searchTerm = $('#searchInput').val().toLowerCase();
+
+            // Filter bookings based on criteria
+            let filtered = filteredBookings;
+
+            if (typeFilter !== 'all') {
+                filtered = filtered.filter(booking => booking.bookingType === typeFilter);
+            }
+
+            if (statusFilter !== 'all') {
+                filtered = filtered.filter(booking => booking.status === statusFilter);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(booking =>
+                    (booking.bookingType && booking.bookingType.toLowerCase().includes(searchTerm)) ||
+                    (booking.tripDestination && booking.tripDestination.toLowerCase().includes(searchTerm)) ||
+                    (booking.hotelName && booking.hotelName.toLowerCase().includes(searchTerm)) ||
+                    (booking.busRoute && booking.busRoute.toLowerCase().includes(searchTerm)) ||
+                    (booking.vehicleModel && booking.vehicleModel.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            // Reset pagination
+            currentPage = 1;
+            displayBookings(filtered);
+            setupPagination(filtered);
+        }
+
+        function displayBookings(bookings) {
+            if (!bookings || bookings.length === 0) {
+                $('#bookingsContainer').html('<div class="no-bookings">No bookings found matching your criteria.</div>');
+                $('#pagination').hide();
+                return;
+            }
+
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, bookings.length);
+            const bookingsToShow = bookings.slice(startIndex, endIndex);
+
+            let bookingsHTML = '';
+
+            bookingsToShow.forEach(booking => {
+                // Determine booking type and style
+                let typeClass = '';
+                switch(booking.bookingType) {
+                    case 'HOTEL':
+                        typeClass = 'hotel';
+                        break;
+                    case 'BUS':
+                        typeClass = 'bus';
+                        break;
+                    case 'VEHICLE':
+                        typeClass = 'vehicle';
+                        break;
+                    default:
+                        typeClass = '';
+                }
+
+                // Format date
+                const bookingDate = new Date(booking.createdAt).toLocaleDateString();
+
+                // Determine status class
+                const statusClass = booking.status === 'CONFIRMED' ? 'status-confirmed' : 'status-canceled';
+
+                // Booking title
+                let title = booking.bookingType;
+                if (booking.hotelName) {
+                    title = `${booking.hotelName}`;
+                } else if (booking.busRoute) {
+                    title = `${booking.busRoute}`;
+                } else if (booking.vehicleModel) {
+                    title = `${booking.vehicleModel}`;
+                }
+
+                // Build booking card
+                bookingsHTML += `
+                        <div class="booking-card">
+                            <div class="booking-type ${typeClass}">${booking.bookingType} Booking</div>
+                            <div class="booking-details">
+                                <div class="booking-title">${title}</div>
+                                <div class="booking-info">
+                                    <span class="label">Booking ID:</span>
+                                    <span>${booking.id.substring(0, 8)}...</span>
+                                </div>
+                                <div class="booking-info">
+                                    <span class="label">Trip:</span>
+                                    <span>${booking.tripDestination || 'N/A'}</span>
+                                </div>
+                                <div class="booking-info">
+                                    <span class="label">Amount:</span>
+                                    <span>$${booking.amount.toFixed(2)}</span>
+                                </div>
+                                <div class="booking-info">
+                                    <span class="label">Date:</span>
+                                    <span>${bookingDate}</span>
+                                </div>
+                                <div class="booking-info">
+                                    <span class="label">Status:</span>
+                                    <span class="booking-status ${statusClass}">${booking.status}</span>
+                                </div>
+                            </div>
+                            <div class="booking-actions">
+                                <a href="booking-details.html?id=${booking.id}" class="btn btn-view">View Details</a>
+                                ${booking.status === 'CONFIRMED' ?
+                    `<a href="payment.html?bookingId=${booking.id}&tripId=${booking.tripId}" class="btn btn-pay">Pay Now</a>` :
+                    ''
+                }
+                            </div>
+                        </div>
+                    `;
+            });
+
+            $('#bookingsContainer').html(bookingsHTML);
+            $('#pagination').show();
+        }
+
+        function setupPagination(bookings) {
+            const totalPages = Math.ceil(bookings.length / itemsPerPage);
+
+            if (totalPages <= 1) {
+                $('#pagination').hide();
+                return;
+            }
+
+            let paginationHTML = '';
+
+            // Previous button
+            paginationHTML += `
+                    <button class="pagination-btn prev-btn" ${currentPage === 1 ? 'disabled' : ''}>
+                        &laquo;
+                    </button>
+                `;
+
+            // Page buttons
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `
+                        <button class="pagination-btn page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
+                            ${i}
+                        </button>
+                    `;
+            }
+
+            // Next button
+            paginationHTML += `
+                    <button class="pagination-btn next-btn" ${currentPage === totalPages ? 'disabled' : ''}>
+                        &raquo;
+                    </button>
+                `;
+
+            $('#pagination').html(paginationHTML);
+
+            // Add event listeners
+            $('.page-btn').on('click', function() {
+                currentPage = parseInt($(this).data('page'));
+                displayBookings(bookings);
+                setupPagination(bookings);
+            });
+
+            $('.prev-btn').on('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayBookings(bookings);
+                    setupPagination(bookings);
+                }
+            });
+
+            $('.next-btn').on('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayBookings(bookings);
+                    setupPagination(bookings);
+                }
+            });
+        }
+
+        function showSuccess(message) {
+            $('#successAlert').text(message).show();
+            $('#errorAlert').hide();
+
+            // Auto-hide after 3 seconds
+            setTimeout(function() {
+                $('#successAlert').hide();
+            }, 3000);
+        }
+
+        function showError(message) {
+            $('#errorAlert').text(message).show();
+            $('#successAlert').hide();
+        }
+    });
+</script>
+</body>
+</html>
