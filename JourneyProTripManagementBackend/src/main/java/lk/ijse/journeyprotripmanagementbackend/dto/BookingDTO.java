@@ -8,11 +8,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingDTO {
+    private String id;
     private String bookingType; // HOTEL, BUS, VEHICLE
-    private String userId; // ID of the user making the booking
-    private String tripId; // ID of the trip
-    private String hotelId; // ID of the hotel (for hotel bookings)
-    private String busId; // ID of the bus (for bus bookings)
-    private String vehicleId; // ID of the vehicle (for vehicle bookings)
+    private String userId;
+    private String tripId;
+    private String hotelId;
+    private String hotelName; // Add this field
+    private String busId;
+    private String busNumber; // Add this field
+    private String vehicleId;
+    private String vehicleModel; // Add this field
     private Double amount;
+    private String status;
+    private String createdAt; // Ensure this is in ISO format (yyyy-MM-dd'T'HH:mm:ss)
 }

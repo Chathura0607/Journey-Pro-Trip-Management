@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BusDTO {
+    private String id;
     private String busNumber; // Unique identifier for the bus
     private String route; // Route information (e.g., "City A to City B")
     private LocalTime departureTime; // Scheduled departure time
