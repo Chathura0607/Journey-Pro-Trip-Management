@@ -4,75 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings - Journey Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #28a745;
+            --primary-dark: #218838;
+            --secondary: #6c757d;
+            --secondary-dark: #5a6268;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #dc3545;
+            --danger-dark: #c82333;
+            --info: #17a2b8;
+            --info-dark: #138496;
+            --warning: #ffc107;
+            --warning-dark: #e0a800;
+            --success: #28a745;
+            --success-dark: #218838;
+            --border-radius: 8px;
+            --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --box-shadow-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: #f4f4f4;
+            color: var(--dark);
+            line-height: 1.6;
             margin: 0;
             padding: 0;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 30px auto;
             padding: 20px;
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
 
         h1 {
-            color: #28a745;
+            color: var(--primary);
             margin-bottom: 20px;
             text-align: center;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 10px;
         }
 
         .btn {
             display: inline-block;
-            background-color: #28a745;
+            background-color: var(--primary);
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 25px;
             cursor: pointer;
             text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .btn:hover {
-            background-color: #218838;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn-view {
-            background-color: #17a2b8;
+            background-color: var(--info);
         }
 
         .btn-view:hover {
-            background-color: #138496;
+            background-color: var(--info-dark);
         }
 
         .btn-pay {
-            background-color: #ffc107;
-            color: #212529;
+            background-color: var(--warning);
+            color: var(--dark);
         }
 
         .btn-pay:hover {
-            background-color: #e0a800;
+            background-color: var(--warning-dark);
         }
 
         .btn-cancel {
-            background-color: #dc3545;
+            background-color: var(--danger);
         }
 
         .btn-cancel:hover {
-            background-color: #c82333;
+            background-color: var(--danger-dark);
         }
 
         .alert {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
             display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .alert-success {
@@ -91,24 +149,48 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
         }
 
         .nav-link {
-            color: #28a745;
+            color: var(--primary);
             text-decoration: none;
             margin-left: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
         }
 
         .nav-link:hover {
-            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         .filters {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
 
         .filter-group {
@@ -118,90 +200,153 @@
 
         .filter-group label {
             margin-right: 10px;
-            font-weight: bold;
+            font-weight: 500;
+            color: var(--dark);
         }
 
         .filter-group select {
-            padding: 8px;
+            padding: 10px 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 25px;
+            background-color: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23343a40'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+            padding-right: 30px;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
         }
 
         .search-group {
             display: flex;
             align-items: center;
+            position: relative;
+            width: 100%;
+            max-width: 300px;
         }
 
         .search-group input {
-            padding: 8px;
+            padding: 10px 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
+            border-radius: 25px;
+            width: 100%;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+            padding-right: 50px;
+        }
+
+        .search-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+        }
+
+        .search-group button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-group button:hover {
+            background-color: var(--primary-dark);
         }
 
         .booking-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
         }
 
         .booking-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: relative;
         }
 
         .booking-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow-hover);
         }
 
         .booking-type {
-            padding: 10px;
+            padding: 15px;
             color: white;
             text-align: center;
-            font-weight: bold;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 14px;
         }
 
         .hotel {
-            background-color: #4caf50;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
         }
 
         .bus {
-            background-color: #2196f3;
+            background: linear-gradient(135deg, #2196f3, #0d47a1);
         }
 
         .vehicle {
-            background-color: #ff9800;
+            background: linear-gradient(135deg, #ff9800, #e65100);
         }
 
         .booking-details {
-            padding: 15px;
+            padding: 20px;
         }
 
         .booking-title {
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-weight: 600;
+            margin-bottom: 15px;
             font-size: 1.1em;
+            color: var(--dark);
         }
 
         .booking-info {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .booking-info .label {
-            color: #6c757d;
+            color: var(--secondary);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .booking-info .value {
+            font-weight: 500;
         }
 
         .booking-status {
-            padding: 3px 8px;
+            padding: 5px 10px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
             display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .status-confirmed {
@@ -215,42 +360,111 @@
         }
 
         .booking-actions {
-            padding: 15px;
+            padding: 15px 20px;
             border-top: 1px solid #eee;
             display: flex;
             justify-content: space-between;
+            gap: 10px;
+        }
+
+        .booking-actions .btn {
+            flex: 1;
+            padding: 8px 10px;
         }
 
         .no-bookings {
             text-align: center;
-            padding: 30px;
-            color: #6c757d;
+            padding: 50px 30px;
+            color: var(--secondary);
             font-style: italic;
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            grid-column: 1 / -1;
+            box-shadow: var(--box-shadow);
+        }
+
+        .no-bookings i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+            display: block;
         }
 
         .pagination {
             display: flex;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         .pagination-btn {
-            padding: 8px 12px;
+            padding: 8px 15px;
             margin: 0 5px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 25px;
             background-color: white;
             cursor: pointer;
+            transition: var(--transition);
+            min-width: 40px;
+            text-align: center;
         }
 
         .pagination-btn.active {
-            background-color: #28a745;
+            background-color: var(--primary);
             color: white;
-            border-color: #28a745;
+            border-color: var(--primary);
         }
 
-        .pagination-btn:hover:not(.active) {
-            background-color: #f4f4f4;
+        .pagination-btn:hover:not(.active):not([disabled]) {
+            background-color: var(--light);
+            border-color: var(--primary);
+        }
+
+        .pagination-btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(40, 167, 69, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spinner 1s linear infinite;
+        }
+
+        @keyframes spinner {
+            to {transform: rotate(360deg);}
+        }
+
+        /* Badge for number of results */
+        .results-count {
+            background-color: var(--light);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        /* Page transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .booking-cards {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
@@ -260,27 +474,61 @@
 
             .filters {
                 flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
+                gap: 15px;
+                align-items: stretch;
             }
 
-            .filter-group, .search-group {
+            .filter-group {
                 width: 100%;
+                justify-content: space-between;
             }
 
-            .search-group input {
-                flex: 1;
+            .search-group {
+                width: 100%;
+                max-width: none;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .header h1 {
+                margin-bottom: 0;
+            }
+
+            .pagination-btn {
+                padding: 8px 12px;
+                min-width: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                margin: 15px;
+                width: auto;
+            }
+
+            .booking-actions {
+                flex-direction: column;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 5px;
             }
         }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container fade-in">
     <div class="header">
         <h1>My Bookings</h1>
         <div>
-            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="trip-list.html" class="nav-link">My Trips</a>
+            <a href="user-dashboard.html" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="trip-list.html" class="nav-link"><i class="fas fa-route"></i> My Trips</a>
         </div>
     </div>
 
@@ -308,16 +556,22 @@
         </div>
 
         <div class="search-group">
-            <input type="text" id="searchInput" placeholder="Search...">
-            <button class="btn" id="searchBtn">Search</button>
+            <input type="text" id="searchInput" placeholder="Search for destination, hotel, etc.">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
         </div>
     </div>
 
-    <div id="bookingsContainer" class="booking-cards">
-        <div class="no-bookings">Loading bookings...</div>
+    <div id="resultsCount" class="results-count" style="display: none;">
+        Showing <span id="resultsNumber">0</span> bookings
     </div>
 
-    <div class="pagination" id="pagination">
+    <div id="bookingsContainer" class="booking-cards">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <div class="pagination" id="pagination" style="display: none;">
         <!-- Pagination buttons will be added here -->
     </div>
 </div>
@@ -366,6 +620,9 @@
         });
 
         function loadBookings(userId) {
+            // Show loading spinner
+            $('#bookingsContainer').html('<div class="loading"><div class="loading-spinner"></div></div>');
+
             $.ajax({
                 url: `http://localhost:8080/api/v1/user/bookings?userId=${userId}`,
                 method: 'GET',
@@ -380,11 +637,11 @@
                         filteredBookings = bookings;
                         applyFilters();
                     } else {
-                        $('#bookingsContainer').html('<div class="no-bookings">Failed to load bookings.</div>');
+                        $('#bookingsContainer').html('<div class="no-bookings"><i class="fas fa-exclamation-circle"></i>Failed to load bookings.</div>');
                     }
                 },
                 error: function() {
-                    $('#bookingsContainer').html('<div class="no-bookings">An error occurred while loading bookings.</div>');
+                    $('#bookingsContainer').html('<div class="no-bookings"><i class="fas fa-exclamation-triangle"></i>An error occurred while loading bookings.</div>');
                 }
             });
         }
@@ -415,6 +672,10 @@
                 );
             }
 
+            // Update results count
+            $('#resultsNumber').text(filtered.length);
+            $('#resultsCount').show();
+
             // Reset pagination
             currentPage = 1;
             displayBookings(filtered);
@@ -423,7 +684,7 @@
 
         function displayBookings(bookings) {
             if (!bookings || bookings.length === 0) {
-                $('#bookingsContainer').html('<div class="no-bookings">No bookings found matching your criteria.</div>');
+                $('#bookingsContainer').html('<div class="no-bookings"><i class="fas fa-search"></i>No bookings found matching your criteria.</div>');
                 $('#pagination').hide();
                 return;
             }
@@ -438,25 +699,37 @@
             bookingsToShow.forEach(booking => {
                 // Determine booking type and style
                 let typeClass = '';
+                let typeIcon = '';
                 switch(booking.bookingType) {
                     case 'HOTEL':
                         typeClass = 'hotel';
+                        typeIcon = '<i class="fas fa-hotel"></i>';
                         break;
                     case 'BUS':
                         typeClass = 'bus';
+                        typeIcon = '<i class="fas fa-bus"></i>';
                         break;
                     case 'VEHICLE':
                         typeClass = 'vehicle';
+                        typeIcon = '<i class="fas fa-car"></i>';
                         break;
                     default:
                         typeClass = '';
+                        typeIcon = '<i class="fas fa-ticket-alt"></i>';
                 }
 
                 // Format date
-                const bookingDate = new Date(booking.createdAt).toLocaleDateString();
+                const bookingDate = new Date(booking.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
 
                 // Determine status class
                 const statusClass = booking.status === 'CONFIRMED' ? 'status-confirmed' : 'status-canceled';
+                const statusIcon = booking.status === 'CONFIRMED' ?
+                    '<i class="fas fa-check-circle"></i> ' :
+                    '<i class="fas fa-times-circle"></i> ';
 
                 // Booking title
                 let title = booking.bookingType;
@@ -468,37 +741,37 @@
                     title = `${booking.vehicleModel}`;
                 }
 
-                // Build booking card
+                // Build booking card with enhanced styling
                 bookingsHTML += `
                         <div class="booking-card">
-                            <div class="booking-type ${typeClass}">${booking.bookingType} Booking</div>
+                            <div class="booking-type ${typeClass}">${typeIcon} ${booking.bookingType} Booking</div>
                             <div class="booking-details">
                                 <div class="booking-title">${title}</div>
                                 <div class="booking-info">
                                     <span class="label">Booking ID:</span>
-                                    <span>${booking.id.substring(0, 8)}...</span>
+                                    <span class="value">${booking.id.substring(0, 8)}...</span>
                                 </div>
                                 <div class="booking-info">
                                     <span class="label">Trip:</span>
-                                    <span>${booking.tripDestination || 'N/A'}</span>
+                                    <span class="value">${booking.tripDestination || 'N/A'}</span>
                                 </div>
                                 <div class="booking-info">
                                     <span class="label">Amount:</span>
-                                    <span>$${booking.amount.toFixed(2)}</span>
+                                    <span class="value">$${booking.amount.toFixed(2)}</span>
                                 </div>
                                 <div class="booking-info">
                                     <span class="label">Date:</span>
-                                    <span>${bookingDate}</span>
+                                    <span class="value">${bookingDate}</span>
                                 </div>
                                 <div class="booking-info">
                                     <span class="label">Status:</span>
-                                    <span class="booking-status ${statusClass}">${booking.status}</span>
+                                    <span class="booking-status ${statusClass}">${statusIcon}${booking.status}</span>
                                 </div>
                             </div>
                             <div class="booking-actions">
-                                <a href="booking-details.html?id=${booking.id}" class="btn btn-view">View Details</a>
+                                <a href="booking-details.html?id=${booking.id}" class="btn btn-view"><i class="fas fa-eye"></i> View Details</a>
                                 ${booking.status === 'CONFIRMED' ?
-                    `<a href="payment.html?bookingId=${booking.id}&tripId=${booking.tripId}" class="btn btn-pay">Pay Now</a>` :
+                    `<a href="payment-page.html?bookingId=${booking.id}&tripId=${booking.tripId}" class="btn btn-pay"><i class="fas fa-credit-card"></i> Pay Now</a>` :
                     ''
                 }
                             </div>
@@ -523,23 +796,31 @@
             // Previous button
             paginationHTML += `
                     <button class="pagination-btn prev-btn" ${currentPage === 1 ? 'disabled' : ''}>
-                        &laquo;
+                        <i class="fas fa-chevron-left"></i>
                     </button>
                 `;
 
             // Page buttons
             for (let i = 1; i <= totalPages; i++) {
-                paginationHTML += `
+                // Only show limited page numbers
+                if (totalPages <= 7 ||
+                    i === 1 ||
+                    i === totalPages ||
+                    (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    paginationHTML += `
                         <button class="pagination-btn page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
                             ${i}
                         </button>
                     `;
+                } else if ((i === currentPage - 2 && i > 1) || (i === currentPage + 2 && i < totalPages)) {
+                    paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+                }
             }
 
             // Next button
             paginationHTML += `
                     <button class="pagination-btn next-btn" ${currentPage === totalPages ? 'disabled' : ''}>
-                        &raquo;
+                        <i class="fas fa-chevron-right"></i>
                     </button>
                 `;
 
@@ -550,6 +831,10 @@
                 currentPage = parseInt($(this).data('page'));
                 displayBookings(bookings);
                 setupPagination(bookings);
+                // Scroll to top of results
+                $('html, body').animate({
+                    scrollTop: $("#bookingsContainer").offset().top - 20
+                }, 200);
             });
 
             $('.prev-btn').on('click', function() {
@@ -557,6 +842,10 @@
                     currentPage--;
                     displayBookings(bookings);
                     setupPagination(bookings);
+                    // Scroll to top of results
+                    $('html, body').animate({
+                        scrollTop: $("#bookingsContainer").offset().top - 20
+                    }, 200);
                 }
             });
 
@@ -565,6 +854,10 @@
                     currentPage++;
                     displayBookings(bookings);
                     setupPagination(bookings);
+                    // Scroll to top of results
+                    $('html, body').animate({
+                        scrollTop: $("#bookingsContainer").offset().top - 20
+                    }, 200);
                 }
             });
         }

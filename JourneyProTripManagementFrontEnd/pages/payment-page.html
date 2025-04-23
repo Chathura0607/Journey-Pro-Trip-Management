@@ -4,56 +4,161 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - Journey Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #34495e;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #d4edda;
+            --success-text: #155724;
+            --error: #f8d7da;
+            --error-text: #721c24;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 30px auto;
-            padding: 20px;
+            padding: 0 20px;
         }
 
-        .payment-header {
-            text-align: center;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
         }
 
-        .payment-header h1 {
-            color: #28a745;
-            margin: 0 0 10px;
-        }
-
-        .payment-header p {
-            color: #6c757d;
+        .header h1 {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.8rem;
             margin: 0;
         }
 
-        .payment-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 25px;
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: var(--primary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
             margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: var(--success);
+            color: var(--success-text);
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-success i {
+            color: #28a745;
+        }
+
+        .alert-danger {
+            background-color: var(--error);
+            color: var(--error-text);
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-danger i {
+            color: #dc3545;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            padding: 20px 25px;
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .card-header h2 {
-            color: #28a745;
+            color: var(--primary);
             margin: 0;
+            font-weight: 600;
             font-size: 1.4rem;
+        }
+
+        .card-body {
+            padding: 25px;
         }
 
         .booking-summary {
@@ -63,37 +168,103 @@
         .booking-info {
             display: grid;
             grid-template-columns: 150px 1fr;
+            gap: 15px;
             margin-bottom: 10px;
+            align-items: center;
         }
 
         .booking-info .label {
-            font-weight: bold;
-            color: #495057;
+            font-weight: 500;
+            color: var(--gray);
         }
 
         .booking-info .value {
-            color: #212529;
+            color: var(--dark);
+            font-weight: 400;
         }
 
         .price-summary {
             background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
+            padding: 20px;
+            border-radius: var(--border-radius);
             margin-bottom: 25px;
+            box-shadow: var(--shadow-sm);
         }
 
         .price-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
         }
 
         .price-row.total {
             border-top: 1px solid #ddd;
-            padding-top: 10px;
+            padding-top: 15px;
             margin-top: 10px;
-            font-weight: bold;
+            font-weight: 600;
             font-size: 1.1em;
+            color: var(--primary);
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .payment-method {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary);
+            background-color: rgba(46, 204, 113, 0.05);
+        }
+
+        .payment-method.selected:before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--primary);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .payment-method img {
+            height: 40px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .payment-method:hover img {
+            transform: scale(1.05);
+        }
+
+        .payment-method div {
+            font-weight: 500;
+            color: var(--dark);
         }
 
         .form-group {
@@ -102,101 +273,37 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #495057;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 10px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
         }
 
         .form-row {
             display: flex;
-            gap: 15px;
+            gap: 20px;
         }
 
         .form-row .form-group {
             flex: 1;
-        }
-
-        .payment-methods {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .payment-method {
-            flex: 1;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .payment-method:hover {
-            border-color: #28a745;
-        }
-
-        .payment-method.selected {
-            border-color: #28a745;
-            background-color: #d4edda;
-        }
-
-        .payment-method img {
-            max-height: 40px;
-            margin-bottom: 10px;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #28a745;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-        }
-
-        .btn:hover {
-            background-color: #218838;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            margin-top: 10px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
         }
 
         .card-icons {
@@ -207,37 +314,226 @@
 
         .card-icons img {
             height: 30px;
+            transition: var(--transition);
+        }
+
+        .card-icons img:hover {
+            transform: scale(1.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            margin-top: 15px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2c3e50;
         }
 
         .secured-badge {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 20px;
-            color: #6c757d;
+            margin-top: 25px;
+            color: var(--gray);
             font-size: 14px;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: var(--border-radius);
         }
 
-        .secured-badge img {
+        .secured-badge i {
+            color: var(--primary);
             margin-right: 10px;
-            height: 20px;
+            font-size: 18px;
         }
 
-        .nav-link {
-            color: #28a745;
-            text-decoration: none;
-            margin-left: 15px;
+        .loading {
+            display: inline-block;
+            position: relative;
+            color: var(--gray);
+            font-style: italic;
         }
 
-        .nav-link:hover {
-            text-decoration: underline;
+        .loading::after {
+            content: "...";
+            animation: dots 1.5s infinite;
+            display: inline-block;
+            width: 20px;
+            text-align: left;
         }
 
-        .header {
+        @keyframes dots {
+            0%, 20% { content: "."; }
+            40% { content: ".."; }
+            60%, 100% { content: "..."; }
+        }
+
+        /* Credit card styling */
+        .card-wrapper {
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
+        .credit-card {
+            background: linear-gradient(135deg, #434343, #000000);
+            border-radius: 16px;
+            color: white;
+            padding: 25px;
+            position: relative;
+            width: 100%;
+            height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .credit-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            left: 0;
+            top: 0;
+        }
+
+        .card-front {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            padding: 20px;
+        }
+
+        .card-number {
+            font-size: 22px;
+            letter-spacing: 2px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .card-info {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        }
+
+        .card-holder, .card-expiry {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .label-small {
+            font-size: 10px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #cca336, #f0cf7a);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-chip::before {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 25px;
+            background: linear-gradient(135deg, #b89328, #e0bd6c);
+            border-radius: 5px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .card-type {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .card-magnetic {
+            height: 50px;
+            background: #444;
+            margin: 20px 0;
+        }
+
+        .cvv-box {
+            background: white;
+            color: black;
+            height: 40px;
+            width: 70px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            position: absolute;
+            right: 20px;
+            top: 90px;
+        }
+
+        .flip-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 10;
+        }
+
+        .payment-card-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .cvv-help {
+            color: var(--primary);
+            font-size: 14px;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
@@ -249,6 +545,40 @@
             .payment-methods {
                 flex-direction: column;
             }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .booking-info {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .booking-info .label {
+                margin-bottom: -5px;
+            }
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 20px;
+            margin-bottom: 8px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
         }
     </style>
 </head>
@@ -256,138 +586,190 @@
 <div class="container">
     <div class="header">
         <h1>Complete Your Payment</h1>
-        <div>
-            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
-            <a id="backLink" href="#" class="nav-link">Back to Trip</a>
+        <div class="header-actions">
+            <a href="user-dashboard.html" class="nav-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a id="backLink" href="#" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Trip</a>
         </div>
     </div>
 
-    <div id="successAlert" class="alert alert-success"></div>
-    <div id="errorAlert" class="alert alert-danger"></div>
+    <div id="successAlert" class="alert alert-success"><i class="fas fa-check-circle fa-lg"></i> <span id="successMessage"></span></div>
+    <div id="errorAlert" class="alert alert-danger"><i class="fas fa-exclamation-circle fa-lg"></i> <span id="errorMessage"></span></div>
 
-    <div class="payment-card">
+    <div class="card">
         <div class="card-header">
             <h2>Booking Summary</h2>
-            <span id="bookingType">Loading...</span>
+            <span id="bookingType" class="badge">Loading...</span>
         </div>
 
-        <div class="booking-summary">
-            <div class="booking-info">
-                <span class="label">Destination:</span>
-                <span id="destination" class="value">Loading...</span>
+        <div class="card-body">
+            <div class="booking-summary">
+                <div class="booking-info">
+                    <span class="label">Destination:</span>
+                    <span id="destination" class="value"><span class="loading">Loading</span></span>
+                </div>
+                <div class="booking-info">
+                    <span class="label">Date Range:</span>
+                    <span id="dateRange" class="value"><span class="loading">Loading</span></span>
+                </div>
+                <div id="specificDetails">
+                    <!-- Will be populated dynamically -->
+                    <div class="skeleton" style="width: 100%;"></div>
+                    <div class="skeleton" style="width: 85%;"></div>
+                    <div class="skeleton" style="width: 90%;"></div>
+                </div>
             </div>
-            <div class="booking-info">
-                <span class="label">Date Range:</span>
-                <span id="dateRange" class="value">Loading...</span>
-            </div>
-            <div id="specificDetails"></div>
-        </div>
 
-        <div class="price-summary">
-            <div class="price-row">
-                <span>Base Price</span>
-                <span id="basePrice">$0.00</span>
-            </div>
-            <div class="price-row">
-                <span>Service Fee</span>
-                <span id="serviceFee">$0.00</span>
-            </div>
-            <div class="price-row">
-                <span>Taxes</span>
-                <span id="taxes">$0.00</span>
-            </div>
-            <div class="price-row total">
-                <span>Total</span>
-                <span id="totalPrice">$0.00</span>
+            <div class="price-summary">
+                <div class="price-row">
+                    <span>Base Price</span>
+                    <span id="basePrice">$0.00</span>
+                </div>
+                <div class="price-row">
+                    <span>Service Fee</span>
+                    <span id="serviceFee">$0.00</span>
+                </div>
+                <div class="price-row">
+                    <span>Taxes</span>
+                    <span id="taxes">$0.00</span>
+                </div>
+                <div class="price-row total">
+                    <span>Total</span>
+                    <span id="totalPrice">$0.00</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="payment-card">
+    <div class="card">
         <div class="card-header">
             <h2>Payment Method</h2>
         </div>
 
-        <div class="payment-methods">
-            <div class="payment-method selected" data-method="card">
-                <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_card-512.png" alt="Credit Card">
-                <div>Credit Card</div>
-            </div>
-            <div class="payment-method" data-method="paypal">
-                <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_paypal-512.png" alt="PayPal">
-                <div>PayPal</div>
-            </div>
-            <div class="payment-method" data-method="bitcoin">
-                <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_bitcoin-512.png" alt="Bitcoin">
-                <div>Cryptocurrency</div>
-            </div>
-        </div>
-
-        <form id="paymentForm">
-            <div id="cardPaymentForm">
-                <div class="form-group">
-                    <label for="cardName">Name on Card</label>
-                    <input type="text" id="cardName" placeholder="John Doe" required>
+        <div class="card-body">
+            <div class="payment-methods">
+                <div class="payment-method selected" data-method="card">
+                    <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_card-512.png" alt="Credit Card">
+                    <div>Credit Card</div>
                 </div>
+                <div class="payment-method" data-method="paypal">
+                    <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_paypal-512.png" alt="PayPal">
+                    <div>PayPal</div>
+                </div>
+                <div class="payment-method" data-method="bitcoin">
+                    <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_bitcoin-512.png" alt="Bitcoin">
+                    <div>Cryptocurrency</div>
+                </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="cardNumber">Card Number</label>
-                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
-                    <div class="card-icons">
-                        <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_master_card-512.png" alt="MasterCard">
-                        <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_visa-512.png" alt="Visa">
-                        <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_american_express-512.png" alt="American Express">
+            <form id="paymentForm">
+                <div id="cardPaymentForm">
+                    <!-- Credit Card Visual Representation -->
+                    <div class="card-wrapper">
+                        <button type="button" class="flip-btn" id="flipCard"><i class="fas fa-sync-alt"></i></button>
+                        <div class="credit-card" id="creditCard">
+                            <div class="card-front">
+                                <div class="card-type" id="cardType">VISA</div>
+                                <div class="card-chip"></div>
+                                <div class="card-number" id="cardNumberDisplay">•••• •••• •••• ••••</div>
+                                <div class="card-info">
+                                    <div class="card-holder">
+                                        <span class="label-small">Card Holder</span>
+                                        <span id="cardNameDisplay">Your Name</span>
+                                    </div>
+                                    <div class="card-expiry">
+                                        <span class="label-small">Expires</span>
+                                        <span id="expiryDisplay">MM/YY</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-magnetic"></div>
+                                <div class="cvv-box" id="cvvDisplay">CVV</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-row">
                     <div class="form-group">
-                        <label for="expiryDate">Expiry Date</label>
-                        <input type="text" id="expiryDate" placeholder="MM/YY" required>
+                        <label for="cardName">Name on Card</label>
+                        <input type="text" id="cardName" placeholder="John Doe" required>
                     </div>
+
                     <div class="form-group">
-                        <label for="cvv">CVV</label>
-                        <input type="text" id="cvv" placeholder="123" required>
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                        <div class="card-icons">
+                            <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_master_card-512.png" alt="MasterCard">
+                            <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_visa-512.png" alt="Visa">
+                            <img src="https://cdn4.iconfinder.com/data/icons/payment-method/160/payment_method_american_express-512.png" alt="American Express">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiryDate">Expiry Date</label>
+                            <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div class="form-group">
+                            <div class="payment-card-label">
+                                <label for="cvv">CVV</label>
+                                <span class="cvv-help" id="cvvHelp"><i class="fas fa-question-circle"></i> What's this?</span>
+                            </div>
+                            <input type="text" id="cvv" placeholder="123" maxlength="4" required>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="paypalForm" style="display: none;">
-                <div class="form-group">
-                    <label for="paypalEmail">PayPal Email</label>
-                    <input type="email" id="paypalEmail" placeholder="your-email@example.com">
+                <div id="paypalForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="paypalEmail">PayPal Email</label>
+                        <input type="email" id="paypalEmail" placeholder="your-email@example.com">
+                    </div>
+                    <div class="text-center" style="text-align: center; margin: 30px 0;">
+                        <img src="https://cdn4.iconfinder.com/data/icons/payment-method/512/paypal-512.png" alt="PayPal" style="width: 120px;">
+                        <p style="margin-top: 15px; color: var(--gray);">You will be redirected to PayPal to complete your payment.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div id="cryptoForm" style="display: none;">
-                <div class="form-group">
-                    <label for="cryptoType">Select Cryptocurrency</label>
-                    <select id="cryptoType">
-                        <option value="bitcoin">Bitcoin</option>
-                        <option value="ethereum">Ethereum</option>
-                        <option value="litecoin">Litecoin</option>
-                    </select>
+                <div id="cryptoForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="cryptoType">Select Cryptocurrency</label>
+                        <select id="cryptoType">
+                            <option value="bitcoin">Bitcoin</option>
+                            <option value="ethereum">Ethereum</option>
+                            <option value="litecoin">Litecoin</option>
+                            <option value="ripple">Ripple (XRP)</option>
+                            <option value="cardano">Cardano (ADA)</option>
+                        </select>
+                    </div>
+                    <div class="text-center" style="text-align: center; margin: 20px 0;">
+                        <div id="qrCodePlaceholder" style="background-color: #f8f9fa; width: 180px; height: 180px; margin: 0 auto; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <img src="https://cdn0.iconfinder.com/data/icons/essentials-line-6/24/048_-_QR_Code-512.png" alt="QR Code" style="width: 80px; opacity: 0.5;">
+                        </div>
+                        <p style="margin-top: 15px; color: var(--gray);">Scan the QR code or send the exact amount to the wallet address below.</p>
+                        <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px; word-break: break-all; font-family: monospace; font-size: 0.9rem;">
+                            bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                        </div>
+                    </div>
                 </div>
+
+                <div class="form-group">
+                    <label for="billingAddress">Billing Address</label>
+                    <input type="text" id="billingAddress" placeholder="Enter your billing address" required>
+                </div>
+
+                <button type="submit" class="btn" id="paymentBtn"><i class="fas fa-lock"></i> Pay Now</button>
+                <a id="cancelBtn" href="#" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+            </form>
+
+            <div class="secured-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Your payment information is secure. We use SSL encryption to protect your data.</span>
             </div>
-
-            <div class="form-group">
-                <label for="billingAddress">Billing Address</label>
-                <input type="text" id="billingAddress" placeholder="Enter your billing address" required>
-            </div>
-
-            <button type="submit" class="btn" id="paymentBtn">Pay Now</button>
-            <a id="cancelBtn" href="#" class="btn btn-secondary">Cancel</a>
-        </form>
-
-        <div class="secured-badge">
-            <img src="https://cdn4.iconfinder.com/data/icons/web-and-security-2/32/Security-512.png" alt="Secure">
-            <span>Your payment information is secure. We use SSL encryption to protect your data.</span>
         </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="../js/api-client.js"></script>
 <script>
     $(document).ready(function() {
         // Check if user is logged in
@@ -415,6 +797,79 @@
         // Load booking and trip details
         loadBookingDetails(bookingId);
 
+        // Format credit card number with spaces
+        $('#cardNumber').on('input', function() {
+            let value = $(this).val().replace(/\D/g, '');
+            let formattedValue = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            $(this).val(formattedValue);
+
+            // Update card display
+            let displayValue = formattedValue;
+            if (displayValue.length === 0) {
+                displayValue = '•••• •••• •••• ••••';
+            }
+            $('#cardNumberDisplay').text(displayValue);
+
+            // Determine card type based on first digit
+            let cardType = 'CARD';
+            if (value.startsWith('4')) {
+                cardType = 'VISA';
+            } else if (value.startsWith('5')) {
+                cardType = 'MASTER';
+            } else if (value.startsWith('3')) {
+                cardType = 'AMEX';
+            } else if (value.startsWith('6')) {
+                cardType = 'DISCOVER';
+            }
+            $('#cardType').text(cardType);
+        });
+
+        // Format expiry date with slash
+        $('#expiryDate').on('input', function() {
+            let value = $(this).val().replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            $(this).val(value);
+
+            // Update card display
+            $('#expiryDisplay').text(value.length > 0 ? value : 'MM/YY');
+        });
+
+        // Update card name display
+        $('#cardName').on('input', function() {
+            let value = $(this).val();
+            $('#cardNameDisplay').text(value.length > 0 ? value : 'Your Name');
+        });
+
+        // Update CVV display
+        $('#cvv').on('input', function() {
+            let value = $(this).val();
+            $('#cvvDisplay').text(value.length > 0 ? value : 'CVV');
+        });
+
+        // Flip card when focusing on CVV or clicking help
+        $('#cvv').on('focus', function() {
+            $('#creditCard').addClass('flipped');
+        }).on('blur', function() {
+            $('#creditCard').removeClass('flipped');
+        });
+
+        $('#cvvHelp').on('click', function() {
+            $('#creditCard').toggleClass('flipped');
+        });
+
+        // Manual card flip button
+        $('#flipCard').on('click', function() {
+            $('#creditCard').toggleClass('flipped');
+        });
+
         // Handle payment method selection
         $('.payment-method').on('click', function() {
             $('.payment-method').removeClass('selected');
@@ -426,11 +881,11 @@
             $('#cardPaymentForm, #paypalForm, #cryptoForm').hide();
 
             if (method === 'card') {
-                $('#cardPaymentForm').show();
+                $('#cardPaymentForm').fadeIn(300);
             } else if (method === 'paypal') {
-                $('#paypalForm').show();
+                $('#paypalForm').fadeIn(300);
             } else if (method === 'bitcoin') {
-                $('#cryptoForm').show();
+                $('#cryptoForm').fadeIn(300);
             }
         });
 
@@ -453,7 +908,7 @@
             }
 
             // Show loading state
-            $('#paymentBtn').text('Processing...').prop('disabled', true);
+            $('#paymentBtn').html('<i class="fas fa-circle-notch fa-spin"></i> Processing...').prop('disabled', true);
 
             // Simulate payment processing
             setTimeout(function() {
@@ -478,8 +933,33 @@
                     if (response.code === 200) {
                         const booking = response.data;
 
-                        // Display booking type
-                        $('#bookingType').text(`${booking.bookingType} Booking`);
+                        // Display booking type with a badge
+                        let badgeColor;
+                        let badgeIcon;
+
+                        switch(booking.bookingType) {
+                            case 'HOTEL':
+                                badgeColor = '#2ecc71';
+                                badgeIcon = 'hotel';
+                                break;
+                            case 'BUS':
+                                badgeColor = '#3498db';
+                                badgeIcon = 'bus';
+                                break;
+                            case 'VEHICLE':
+                                badgeColor = '#e67e22';
+                                badgeIcon = 'car';
+                                break;
+                            default:
+                                badgeColor = '#7f8c8d';
+                                badgeIcon = 'tag';
+                        }
+
+                        $('#bookingType').html(`
+                            <span style="background-color: ${badgeColor}; color: white; padding: 5px 10px; border-radius: 20px; font-size: 13px; font-weight: 500;">
+                                <i class="fas fa-${badgeIcon}"></i> ${booking.bookingType} Booking
+                            </span>
+                        `);
 
                         // Load trip details to get destination and dates
                         loadTripDetails(booking.tripId);
@@ -493,6 +973,9 @@
                         $('#serviceFee').text(`$${serviceFee.toFixed(2)}`);
                         $('#taxes').text(`$${taxes.toFixed(2)}`);
                         $('#totalPrice').text(`$${booking.amount.toFixed(2)}`);
+
+                        // Update the total on the payment button
+                        $('#paymentBtn').html(`<i class="fas fa-lock"></i> Pay $${booking.amount.toFixed(2)}`);
 
                         // Load specific details based on booking type
                         switch(booking.bookingType) {
@@ -531,9 +1014,14 @@
                         const startDate = new Date(trip.startDate).toLocaleDateString();
                         const endDate = new Date(trip.endDate).toLocaleDateString();
 
+                        // Calculate number of days
+                        const start = new Date(trip.startDate);
+                        const end = new Date(trip.endDate);
+                        const days = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
                         // Update UI
                         $('#destination').text(trip.destination);
-                        $('#dateRange').text(`${startDate} to ${endDate}`);
+                        $('#dateRange').text(`${startDate} to ${endDate} (${days} days)`);
                     } else {
                         $('#destination, #dateRange').text('Not available');
                     }
@@ -567,7 +1055,7 @@
                                 </div>
                                 <div class="booking-info">
                                     <span class="label">Rating:</span>
-                                    <span class="value">${hotel.rating} ★</span>
+                                    <span class="value">${hotel.rating} <span style="color: gold;">★</span></span>
                                 </div>
                             `;
 
@@ -599,11 +1087,11 @@
                                     <span class="value">${bus.route}</span>
                                 </div>
                                 <div class="booking-info">
-                                    <span class="label">Departure Time:</span>
+                                    <span class="label">Departure:</span>
                                     <span class="value">${bus.departureTime}</span>
                                 </div>
                                 <div class="booking-info">
-                                    <span class="label">Arrival Time:</span>
+                                    <span class="label">Arrival:</span>
                                     <span class="value">${bus.arrivalTime}</span>
                                 </div>
                             `;
@@ -656,6 +1144,7 @@
             const cardNumber = $('#cardNumber').val().replace(/\s/g, '');
             if (!/^\d{16}$/.test(cardNumber)) {
                 showError('Please enter a valid 16-digit card number');
+                $('#cardNumber').focus();
                 return false;
             }
 
@@ -663,6 +1152,15 @@
             const expiryDate = $('#expiryDate').val();
             if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
                 showError('Please enter a valid expiry date (MM/YY)');
+                $('#expiryDate').focus();
+                return false;
+            }
+
+            // Validate month between 01-12
+            const month = parseInt(expiryDate.split('/')[0]);
+            if (month < 1 || month > 12) {
+                showError('Please enter a valid month (01-12)');
+                $('#expiryDate').focus();
                 return false;
             }
 
@@ -670,6 +1168,14 @@
             const cvv = $('#cvv').val();
             if (!/^\d{3,4}$/.test(cvv)) {
                 showError('Please enter a valid CVV code');
+                $('#cvv').focus();
+                return false;
+            }
+
+            // Validate name on card (not empty)
+            if (!$('#cardName').val().trim()) {
+                showError('Please enter the name on card');
+                $('#cardName').focus();
                 return false;
             }
 
@@ -677,12 +1183,14 @@
         }
 
         function showSuccess(message) {
-            $('#successAlert').text(message).show();
+            $('#successMessage').text(message);
+            $('#successAlert').fadeIn();
             $('#errorAlert').hide();
         }
 
         function showError(message) {
-            $('#errorAlert').text(message).show();
+            $('#errorMessage').text(message);
+            $('#errorAlert').fadeIn();
             $('#successAlert').hide();
         }
     });

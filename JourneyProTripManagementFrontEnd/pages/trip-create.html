@@ -4,150 +4,430 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Trip - Journey Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #34495e;
+            --danger: #e74c3c;
+            --light: #f4f7fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #d4edda;
+            --success-text: #155724;
+            --error: #f8d7da;
+            --error-text: #721c24;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 700px;
-            margin: 30px auto;
-            padding: 25px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            padding: 25px 30px;
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 30px;
         }
 
         h1 {
-            color: #28a745;
-            margin-bottom: 20px;
-            text-align: center;
+            margin-bottom: 0;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 25px;
+            position: relative;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
         }
 
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        .form-group input[type="date"] {
+            appearance: none;
+            padding-right: 15px;
         }
 
         .form-row {
             display: flex;
-            justify-content: space-between;
+            gap: 20px;
         }
 
         .form-row .form-group {
-            width: 48%;
+            flex: 1;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         .btn {
-            display: inline-block;
-            background-color: #28a745;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
             color: white;
             padding: 12px 24px;
-            margin-right: 10px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
         }
 
         .btn:hover {
-            background-color: #218838;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            background-color: #6c757d;
+            background-color: var(--secondary);
         }
 
         .btn-secondary:hover {
-            background-color: #5a6268;
+            background-color: #2c3e50;
         }
 
-        .alert {
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
+        .btn i {
+            font-size: 1rem;
         }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .header {
+        .header-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            gap: 10px;
         }
 
         .nav-link {
-            color: #28a745;
+            color: var(--primary);
             text-decoration: none;
-            margin-left: 15px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .nav-link:hover {
-            text-decoration: underline;
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: var(--success);
+            color: var(--success-text);
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-success i {
+            color: #28a745;
+        }
+
+        .alert-danger {
+            background-color: var(--error);
+            color: var(--error-text);
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-danger i {
+            color: #dc3545;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Date picker enhancement styles */
+        .date-container {
+            position: relative;
+        }
+
+        .date-container::after {
+            content: "\f073"; /* Calendar icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: var(--gray);
+            pointer-events: none;
+        }
+
+        /* Destination suggestions container */
+        .destination-suggestions {
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .suggestion-item:hover {
+            background-color: var(--light);
+        }
+
+        .suggestion-item i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        /* Popular destinations section */
+        .popular-destinations {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .popular-destinations h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .destination-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .destination-card {
+            background-color: var(--light);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .destination-card:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .destination-card i {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .destination-card span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .destination-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <h1>Create New Trip</h1>
-        <div>
-            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="trip-list.html" class="nav-link">My Trips</a>
+    <div class="card">
+        <div class="card-header">
+            <h1>Create New Trip</h1>
+            <div class="header-actions">
+                <a href="user-dashboard.html" class="nav-link"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="trip-list.html" class="nav-link"><i class="fas fa-list"></i> My Trips</a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div id="successAlert" class="alert alert-success"><i class="fas fa-check-circle fa-lg"></i> <span id="successMessage"></span></div>
+            <div id="errorAlert" class="alert alert-danger"><i class="fas fa-exclamation-circle fa-lg"></i> <span id="errorMessage"></span></div>
+
+            <form id="createTripForm">
+                <div class="form-group">
+                    <label for="destination">Destination</label>
+                    <input type="text" id="destination" name="destination" placeholder="Where are you going?" required>
+                    <!-- Destination suggestions will appear here -->
+                    <div class="destination-suggestions" id="destinationSuggestions"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <div class="date-container">
+                            <input type="date" id="startDate" name="startDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <div class="date-container">
+                            <input type="date" id="endDate" name="endDate" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Trip Notes (Optional)</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Any special requirements or things to remember..."></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn"><i class="fas fa-plane-departure"></i> Create Trip</button>
+                    <a href="trip-list.html" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+                </div>
+            </form>
+
+            <!-- Popular destinations section (non-functional, just for UI enhancement) -->
+            <div class="popular-destinations">
+                <h3>Popular Destinations</h3>
+                <div class="destination-grid">
+                    <div class="destination-card" data-destination="Paris, France">
+                        <i class="fas fa-monument"></i>
+                        <span>Paris</span>
+                    </div>
+                    <div class="destination-card" data-destination="London, UK">
+                        <i class="fas fa-landmark"></i>
+                        <span>London</span>
+                    </div>
+                    <div class="destination-card" data-destination="Tokyo, Japan">
+                        <i class="fas fa-torii-gate"></i>
+                        <span>Tokyo</span>
+                    </div>
+                    <div class="destination-card" data-destination="New York, USA">
+                        <i class="fas fa-city"></i>
+                        <span>New York</span>
+                    </div>
+                    <div class="destination-card" data-destination="Rome, Italy">
+                        <i class="fas fa-pizza-slice"></i>
+                        <span>Rome</span>
+                    </div>
+                    <div class="destination-card" data-destination="Sydney, Australia">
+                        <i class="fas fa-water"></i>
+                        <span>Sydney</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div id="successAlert" class="alert alert-success"></div>
-    <div id="errorAlert" class="alert alert-danger"></div>
-
-    <form id="createTripForm">
-        <div class="form-group">
-            <label for="destination">Destination</label>
-            <input type="text" id="destination" name="destination" required>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="startDate">Start Date</label>
-                <input type="date" id="startDate" name="startDate" required>
-            </div>
-            <div class="form-group">
-                <label for="endDate">End Date</label>
-                <input type="date" id="endDate" name="endDate" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn">Create Trip</button>
-            <a href="trip-list.html" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -182,24 +462,97 @@
             }
         });
 
+        // Popular destination cards click handler
+        $('.destination-card').on('click', function() {
+            const destination = $(this).data('destination');
+            $('#destination').val(destination);
+
+            // Flash effect on input
+            $('#destination').css('background-color', 'rgba(46, 204, 113, 0.1)');
+            setTimeout(function() {
+                $('#destination').css('background-color', '');
+            }, 500);
+        });
+
+        // Destination suggestions (non-functional, just for UI enhancement)
+        const destinations = [
+            { name: "Paris, France", icon: "fas fa-monument" },
+            { name: "London, UK", icon: "fas fa-landmark" },
+            { name: "Tokyo, Japan", icon: "fas fa-torii-gate" },
+            { name: "New York, USA", icon: "fas fa-city" },
+            { name: "Rome, Italy", icon: "fas fa-pizza-slice" },
+            { name: "Sydney, Australia", icon: "fas fa-water" },
+            { name: "Barcelona, Spain", icon: "fas fa-sun" },
+            { name: "Dubai, UAE", icon: "fas fa-building" },
+            { name: "Bangkok, Thailand", icon: "fas fa-gopuram" }
+        ];
+
+        $('#destination').on('input', function() {
+            const input = $(this).val().toLowerCase();
+            if (input.length < 2) {
+                $('#destinationSuggestions').hide();
+                return;
+            }
+
+            const filteredDestinations = destinations.filter(dest =>
+                dest.name.toLowerCase().includes(input)
+            );
+
+            if (filteredDestinations.length === 0) {
+                $('#destinationSuggestions').hide();
+                return;
+            }
+
+            let suggestionsHTML = '';
+            filteredDestinations.forEach(dest => {
+                suggestionsHTML += `
+                    <div class="suggestion-item" data-destination="${dest.name}">
+                        <i class="${dest.icon}"></i> ${dest.name}
+                    </div>
+                `;
+            });
+
+            $('#destinationSuggestions').html(suggestionsHTML).show();
+
+            // Suggestion click handler
+            $('.suggestion-item').on('click', function() {
+                const selectedDestination = $(this).data('destination');
+                $('#destination').val(selectedDestination);
+                $('#destinationSuggestions').hide();
+            });
+        });
+
+        // Hide suggestions when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#destination, #destinationSuggestions').length) {
+                $('#destinationSuggestions').hide();
+            }
+        });
+
         // Handle form submission
         $('#createTripForm').on('submit', function (e) {
             e.preventDefault();
 
             // Hide previous messages
-            $('#errorMessage').hide();
-            $('#successMessage').hide();
+            $('#errorAlert, #successAlert').hide();
 
             // Get form values
             const destination = $('#destination').val();
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
+            const notes = $('#notes').val(); // This is not used in the backend, just UI enhancement
 
             // Validate dates
             if (new Date(startDate) > new Date(endDate)) {
-                $('#errorMessage').text('End date cannot be before start date').show();
+                $('#errorMessage').text('End date cannot be before start date');
+                $('#errorAlert').fadeIn();
                 return;
             }
+
+            // Show loading state on button
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalText = submitBtn.html();
+            submitBtn.html('<i class="fas fa-circle-notch fa-spin"></i> Creating Trip...').prop('disabled', true);
 
             // Prepare trip data
             const tripData = {
@@ -220,7 +573,8 @@
                 data: JSON.stringify(tripData),
                 success: function (response) {
                     if (response.code === 201) {
-                        $('#successMessage').text('Trip created successfully! Redirecting to your trips...').show();
+                        $('#successMessage').text('Trip created successfully! Redirecting to your trips...');
+                        $('#successAlert').fadeIn();
 
                         // Clear form
                         $('#createTripForm')[0].reset();
@@ -230,7 +584,9 @@
                             window.location.href = 'trip-list.html';
                         }, 2000);
                     } else {
-                        $('#errorMessage').text(response.message || 'Failed to create trip').show();
+                        $('#errorMessage').text(response.message || 'Failed to create trip');
+                        $('#errorAlert').fadeIn();
+                        submitBtn.html(originalText).prop('disabled', false);
                     }
                 },
                 error: function (xhr) {
@@ -238,21 +594,18 @@
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
                     }
-                    $('#errorMessage').text(errorMessage).show();
+                    $('#errorMessage').text(errorMessage);
+                    $('#errorAlert').fadeIn();
+                    submitBtn.html(originalText).prop('disabled', false);
                 }
             });
-        });
-
-        // Handle logout
-        $('#logoutButton').on('click', function (e) {
-            e.preventDefault();
-            logout();
         });
 
         // Helper function to get user ID - you may need to adjust this based on your implementation
         function getUserId() {
             // In a real app, you might store the user ID in localStorage or extract it from the JWT token
             // For this example, we'll use a simplified approach by making a separate request
+            let userId;
 
             // Find user by email
             $.ajax({
@@ -270,26 +623,6 @@
             });
 
             return userId;
-        }
-
-        // Logout function
-        function logout() {
-            $.ajax({
-                url: 'http://localhost:8080/api/v1/auth/logout',
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                success: function () {
-                    // Clear local storage and redirect to login page
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('role');
-                    window.location.href = 'login.html';
-                },
-                error: function () {
-                    alert('Logout failed. Please try again.');
-                }
-            });
         }
     });
 </script>

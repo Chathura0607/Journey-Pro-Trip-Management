@@ -4,156 +4,457 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Booking - Journey Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        :root {
+            --primary: #28a745;
+            --primary-light: #d1e7dd;
+            --primary-dark: #218838;
+            --secondary: #6c757d;
+            --secondary-dark: #5a6268;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #dc3545;
+            --danger-dark: #c82333;
+            --info: #17a2b8;
+            --info-dark: #138496;
+            --warning: #ffc107;
+            --warning-dark: #e0a800;
+            --success: #28a745;
+            --success-dark: #218838;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f4;
+            color: var(--dark);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 30px auto;
             padding: 25px;
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2, h3 {
+            color: var(--primary);
         }
 
         h1 {
-            color: #28a745;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-align: center;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 10px;
+        }
+
+        h2 {
+            margin: 10px 0 20px;
+            font-size: 1.5rem;
+            font-weight: 500;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
+            font-weight: 500;
+            color: var(--dark);
         }
 
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             box-sizing: border-box;
             font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+
+        .form-group input[readonly] {
+            background-color: var(--light);
+            cursor: not-allowed;
         }
 
         .option-group {
             display: none;
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f8f9fa;
+            margin-top: 25px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            background-color: var(--light);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .btn {
             display: inline-block;
-            background-color: #28a745;
+            background-color: var(--primary);
             color: white;
             padding: 12px 24px;
             border: none;
-            border-radius: 4px;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 500;
             margin-right: 10px;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .btn:hover {
-            background-color: #218838;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn i {
+            margin-right: 8px;
         }
 
         .btn-secondary {
-            background-color: #6c757d;
+            background-color: var(--secondary);
         }
 
         .btn-secondary:hover {
-            background-color: #5a6268;
+            background-color: var(--secondary-dark);
         }
 
         .alert {
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
             display: none;
+            position: relative;
+            animation: fadeInDown 0.3s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .alert-success {
             background-color: #d4edda;
             color: #155724;
-            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
         }
 
         .alert-danger {
             background-color: #f8d7da;
             color: #721c24;
-            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert i {
+            margin-right: 10px;
+            font-size: 18px;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
         }
 
         .nav-link {
-            color: #28a745;
+            color: var(--primary);
             text-decoration: none;
             margin-left: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link i {
+            margin-right: 5px;
         }
 
         .nav-link:hover {
-            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         .price-display {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 10px;
-            color: #28a745;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-top: 15px;
+            color: var(--primary);
+            text-align: right;
+            animation: fadeIn 0.3s ease;
         }
 
         .card {
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            background-color: white;
+            position: relative;
+            overflow: hidden;
         }
 
         .card:hover {
-            background-color: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #dee2e6;
         }
 
         .card.selected {
-            border-color: #28a745;
-            background-color: #d4edda;
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+        }
+
+        .card.selected::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--primary);
+            font-size: 20px;
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-weight: bold;
+            margin-bottom: 15px;
+            font-weight: 600;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .card-body {
+            padding-top: 5px;
+        }
+
+        .card-body strong {
+            color: var(--dark);
+            display: inline-block;
+            min-width: 90px;
+        }
+
+        .card-body div {
+            margin-bottom: 8px;
+        }
+
+        .rating {
+            color: gold;
+            font-size: 18px;
         }
 
         .no-items {
             text-align: center;
-            padding: 20px;
+            padding: 30px;
             font-style: italic;
-            color: #6c757d;
+            color: var(--secondary);
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+
+        /* Step indicator */
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+
+        .step {
+            position: relative;
+            background-color: white;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+            color: var(--secondary);
+            border: 2px solid #e9ecef;
+            transition: var(--transition);
+        }
+
+        .step-text {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .step.active .step-icon {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .step.active .step-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .step.completed .step-icon {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Enhanced responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 15px;
+                width: auto;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header div {
+                margin-top: 15px;
+            }
+
+            .steps {
+                padding: 0;
+            }
+
+            .step-text {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-group label {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+
+            .steps .step-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .step-text {
+                font-size: 0.7rem;
+                max-width: 75px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
     </style>
 </head>
@@ -162,8 +463,27 @@
     <div class="header">
         <h1>Create Booking</h1>
         <div>
-            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
-            <a id="backToTrip" href="#" class="nav-link">Back to Trip</a>
+            <a href="user-dashboard.html" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a id="backToTrip" href="#" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Trip</a>
+        </div>
+    </div>
+
+    <div class="steps">
+        <div class="step active">
+            <div class="step-icon">1</div>
+            <div class="step-text">Trip Info</div>
+        </div>
+        <div class="step" id="stepType">
+            <div class="step-icon">2</div>
+            <div class="step-text">Booking Type</div>
+        </div>
+        <div class="step" id="stepSelection">
+            <div class="step-icon">3</div>
+            <div class="step-text">Select Option</div>
+        </div>
+        <div class="step" id="stepConfirm">
+            <div class="step-icon">4</div>
+            <div class="step-text">Confirm</div>
         </div>
     </div>
 
@@ -172,12 +492,12 @@
 
     <form id="createBookingForm">
         <div class="form-group">
-            <label for="tripInfo">Trip Information</label>
+            <label for="tripInfo"><i class="fas fa-map-marker-alt"></i> Trip Information</label>
             <input type="text" id="tripInfo" readonly>
         </div>
 
         <div class="form-group">
-            <label for="bookingType">Booking Type</label>
+            <label for="bookingType"><i class="fas fa-tag"></i> Booking Type</label>
             <select id="bookingType" name="bookingType" required>
                 <option value="">Select Booking Type</option>
                 <option value="HOTEL">Hotel</option>
@@ -188,34 +508,34 @@
 
         <!-- Hotel Options -->
         <div id="hotelOptions" class="option-group">
-            <h2>Select a Hotel</h2>
+            <h2><i class="fas fa-hotel"></i> Select a Hotel</h2>
             <div id="hotelList"></div>
             <input type="hidden" id="hotelId" name="hotelId">
         </div>
 
         <!-- Bus Options -->
         <div id="busOptions" class="option-group">
-            <h2>Select a Bus</h2>
+            <h2><i class="fas fa-bus"></i> Select a Bus</h2>
             <div id="busList"></div>
             <input type="hidden" id="busId" name="busId">
         </div>
 
         <!-- Vehicle Options -->
         <div id="vehicleOptions" class="option-group">
-            <h2>Select a Vehicle</h2>
+            <h2><i class="fas fa-car"></i> Select a Vehicle</h2>
             <div id="vehicleList"></div>
             <input type="hidden" id="vehicleId" name="vehicleId">
         </div>
 
         <div class="form-group">
-            <label for="amount">Amount ($)</label>
+            <label for="amount"><i class="fas fa-dollar-sign"></i> Amount ($)</label>
             <input type="number" id="amount" name="amount" step="0.01" min="0" required>
             <div id="priceDisplay" class="price-display"></div>
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn">Create Booking</button>
-            <a id="cancelBtn" href="#" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn"><i class="fas fa-check"></i> Create Booking</button>
+            <a id="cancelBtn" href="#" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
         </div>
     </form>
 </div>
@@ -237,7 +557,7 @@
         const tripId = urlParams.get('tripId');
 
         if (!tripId) {
-            showError('Trip ID is missing');
+            showError('<i class="fas fa-exclamation-circle"></i> Trip ID is missing');
             setTimeout(() => {
                 window.location.href = 'trip-list.html';
             }, 2000);
@@ -263,16 +583,26 @@
             // Hide all option groups
             $('.option-group').hide();
 
-            // Show selected option group
-            if (bookingType === 'HOTEL') {
-                $('#hotelOptions').show();
-                loadHotels();
-            } else if (bookingType === 'BUS') {
-                $('#busOptions').show();
-                loadBuses();
-            } else if (bookingType === 'VEHICLE') {
-                $('#vehicleOptions').show();
-                loadVehicles();
+            // Update steps
+            if (bookingType) {
+                $('#stepType').addClass('active');
+                $('#stepSelection').addClass('active');
+
+                // Show selected option group
+                if (bookingType === 'HOTEL') {
+                    $('#hotelOptions').show();
+                    loadHotels();
+                } else if (bookingType === 'BUS') {
+                    $('#busOptions').show();
+                    loadBuses();
+                } else if (bookingType === 'VEHICLE') {
+                    $('#vehicleOptions').show();
+                    loadVehicles();
+                }
+            } else {
+                $('#stepType').removeClass('active');
+                $('#stepSelection').removeClass('active');
+                $('#stepConfirm').removeClass('active');
             }
         });
 
@@ -283,21 +613,24 @@
             const bookingType = $('#bookingType').val();
 
             if (!bookingType) {
-                showError('Please select a booking type');
+                showError('<i class="fas fa-exclamation-circle"></i> Please select a booking type');
                 return;
             }
 
             // Validate selection based on booking type
             if (bookingType === 'HOTEL' && !$('#hotelId').val()) {
-                showError('Please select a hotel');
+                showError('<i class="fas fa-exclamation-circle"></i> Please select a hotel');
                 return;
             } else if (bookingType === 'BUS' && !$('#busId').val()) {
-                showError('Please select a bus');
+                showError('<i class="fas fa-exclamation-circle"></i> Please select a bus');
                 return;
             } else if (bookingType === 'VEHICLE' && !$('#vehicleId').val()) {
-                showError('Please select a vehicle');
+                showError('<i class="fas fa-exclamation-circle"></i> Please select a vehicle');
                 return;
             }
+
+            // Update confirmation step
+            $('#stepConfirm').addClass('active');
 
             // Create booking data
             const bookingData = {
@@ -316,6 +649,11 @@
                 bookingData.vehicleId = $('#vehicleId').val();
             }
 
+            // Show loading state
+            const $submitBtn = $(this).find('button[type="submit"]');
+            const originalText = $submitBtn.html();
+            $submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
+
             // Submit booking
             $.ajax({
                 url: 'http://localhost:8080/api/v1/user/bookings',
@@ -327,22 +665,31 @@
                 data: JSON.stringify(bookingData),
                 success: function(response) {
                     if (response.code === 201) {
-                        showSuccess('Booking created successfully');
+                        // Reset submit button state
+                        $submitBtn.html(originalText).prop('disabled', false);
+
+                        showSuccess('<i class="fas fa-check-circle"></i> Booking created successfully! Redirecting...');
 
                         // Redirect to trip details after a delay
                         setTimeout(function() {
                             window.location.href = `trip-details.html?id=${tripId}`;
                         }, 2000);
                     } else {
-                        showError(response.message || 'Failed to create booking');
+                        // Reset submit button state
+                        $submitBtn.html(originalText).prop('disabled', false);
+
+                        showError(`<i class="fas fa-exclamation-circle"></i> ${response.message || 'Failed to create booking'}`);
                     }
                 },
                 error: function(xhr) {
+                    // Reset submit button state
+                    $submitBtn.html(originalText).prop('disabled', false);
+
                     let errorMessage = 'An error occurred while creating the booking';
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
                     }
-                    showError(errorMessage);
+                    showError(`<i class="fas fa-exclamation-circle"></i> ${errorMessage}`);
                 }
             });
         });
@@ -359,24 +706,34 @@
                         const trip = response.data;
 
                         // Format dates
-                        const startDate = new Date(trip.startDate).toLocaleDateString();
-                        const endDate = new Date(trip.endDate).toLocaleDateString();
+                        const startDate = new Date(trip.startDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                        const endDate = new Date(trip.endDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
 
-                        // Update trip info
-                        $('#tripInfo').val(`${trip.destination} (${startDate} - ${endDate})`);
+                        // Update trip info with more details
+                        $('#tripInfo').val(`${trip.destination} (${startDate} to ${endDate})`);
                     } else {
-                        showError(response.message || 'Failed to load trip details');
+                        showError(`<i class="fas fa-exclamation-circle"></i> ${response.message || 'Failed to load trip details'}`);
                     }
                 },
                 error: function() {
-                    showError('An error occurred while loading trip details');
+                    showError('<i class="fas fa-exclamation-circle"></i> An error occurred while loading trip details');
                 }
             });
         }
 
         function loadHotels() {
+            $('#hotelList').html('<div class="loading">Loading hotels...</div>');
+
             $.ajax({
-                url: 'http://localhost:8080/api/v1/admin/hotels',
+                url: 'http://localhost:8080/api/v1/user/hotels',
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -385,11 +742,11 @@
                     if (response.code === 200) {
                         displayHotels(response.data);
                     } else {
-                        $('#hotelList').html('<div class="no-items">Failed to load hotels.</div>');
+                        $('#hotelList').html('<div class="no-items"><i class="fas fa-exclamation-circle"></i> Failed to load hotels.</div>');
                     }
                 },
                 error: function() {
-                    $('#hotelList').html('<div class="no-items">An error occurred while loading hotels.</div>');
+                    $('#hotelList').html('<div class="no-items"><i class="fas fa-exclamation-triangle"></i> An error occurred while loading hotels.</div>');
                 }
             });
         }
@@ -398,21 +755,22 @@
             let hotelsHTML = '';
 
             if (!hotels || hotels.length === 0) {
-                hotelsHTML = '<div class="no-items">No hotels available.</div>';
+                hotelsHTML = '<div class="no-items"><i class="fas fa-hotel"></i> No hotels available.</div>';
             } else {
                 hotels.forEach(hotel => {
                     const ratingStars = '★'.repeat(Math.floor(hotel.rating)) + '☆'.repeat(5 - Math.floor(hotel.rating));
+                    const price = 150.00; // Placeholder price
 
                     hotelsHTML += `
-                            <div class="card hotel-card" data-id="${hotel.id}" data-price="150.00">
+                            <div class="card hotel-card" data-id="${hotel.id}" data-price="${price}">
                                 <div class="card-header">
                                     <div>${hotel.name}</div>
-                                    <div style="color: gold;">${ratingStars}</div>
+                                    <div class="rating">${ratingStars}</div>
                                 </div>
-                                <div>
-                                    <strong>Location:</strong> ${hotel.location}<br>
-                                    <strong>Contact:</strong> ${hotel.contactInfo}<br>
-                                    <strong>Price:</strong> $150.00 per night
+                                <div class="card-body">
+                                    <div><strong>Location:</strong> ${hotel.location}</div>
+                                    <div><strong>Contact:</strong> ${hotel.contactInfo}</div>
+                                    <div><strong>Price:</strong> $${price.toFixed(2)} per night</div>
                                 </div>
                             </div>
                         `;
@@ -436,8 +794,10 @@
         }
 
         function loadBuses() {
+            $('#busList').html('<div class="loading">Loading buses...</div>');
+
             $.ajax({
-                url: 'http://localhost:8080/api/v1/admin/buses',
+                url: 'http://localhost:8080/api/v1/user/buses',
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -446,11 +806,11 @@
                     if (response.code === 200) {
                         displayBuses(response.data);
                     } else {
-                        $('#busList').html('<div class="no-items">Failed to load buses.</div>');
+                        $('#busList').html('<div class="no-items"><i class="fas fa-exclamation-circle"></i> Failed to load buses.</div>');
                     }
                 },
                 error: function() {
-                    $('#busList').html('<div class="no-items">An error occurred while loading buses.</div>');
+                    $('#busList').html('<div class="no-items"><i class="fas fa-exclamation-triangle"></i> An error occurred while loading buses.</div>');
                 }
             });
         }
@@ -459,7 +819,7 @@
             let busesHTML = '';
 
             if (!buses || buses.length === 0) {
-                busesHTML = '<div class="no-items">No buses available.</div>';
+                busesHTML = '<div class="no-items"><i class="fas fa-bus"></i> No buses available.</div>';
             } else {
                 buses.forEach(bus => {
                     const price = 35.00; // Placeholder price
@@ -468,13 +828,13 @@
                             <div class="card bus-card" data-id="${bus.id}" data-price="${price}">
                                 <div class="card-header">
                                     <div>Bus #${bus.busNumber}</div>
-                                    <div>${bus.availableSeats} seats available</div>
+                                    <div><i class="fas fa-users"></i> ${bus.availableSeats} seats</div>
                                 </div>
-                                <div>
-                                    <strong>Route:</strong> ${bus.route}<br>
-                                    <strong>Departure:</strong> ${bus.departureTime}<br>
-                                    <strong>Arrival:</strong> ${bus.arrivalTime}<br>
-                                    <strong>Price:</strong> $${price.toFixed(2)} per person
+                                <div class="card-body">
+                                    <div><strong>Route:</strong> ${bus.route}</div>
+                                    <div><strong>Departure:</strong> ${bus.departureTime}</div>
+                                    <div><strong>Arrival:</strong> ${bus.arrivalTime}</div>
+                                    <div><strong>Price:</strong> $${price.toFixed(2)} per person</div>
                                 </div>
                             </div>
                         `;
@@ -498,8 +858,10 @@
         }
 
         function loadVehicles() {
+            $('#vehicleList').html('<div class="loading">Loading vehicles...</div>');
+
             $.ajax({
-                url: 'http://localhost:8080/api/v1/admin/vehicles',
+                url: 'http://localhost:8080/api/v1/user/vehicles',
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -508,11 +870,11 @@
                     if (response.code === 200) {
                         displayVehicles(response.data);
                     } else {
-                        $('#vehicleList').html('<div class="no-items">Failed to load vehicles.</div>');
+                        $('#vehicleList').html('<div class="no-items"><i class="fas fa-exclamation-circle"></i> Failed to load vehicles.</div>');
                     }
                 },
                 error: function() {
-                    $('#vehicleList').html('<div class="no-items">An error occurred while loading vehicles.</div>');
+                    $('#vehicleList').html('<div class="no-items"><i class="fas fa-exclamation-triangle"></i> An error occurred while loading vehicles.</div>');
                 }
             });
         }
@@ -521,44 +883,50 @@
             let vehiclesHTML = '';
 
             if (!vehicles || vehicles.length === 0) {
-                vehiclesHTML = '<div class="no-items">No vehicles available.</div>';
+                vehiclesHTML = '<div class="no-items"><i class="fas fa-car"></i> No vehicles available.</div>';
             } else {
                 // Filter out vehicles that are not available
                 const availableVehicles = vehicles.filter(vehicle => vehicle.isAvailable);
 
                 if (availableVehicles.length === 0) {
-                    vehiclesHTML = '<div class="no-items">No vehicles currently available.</div>';
+                    vehiclesHTML = '<div class="no-items"><i class="fas fa-car"></i> No vehicles currently available.</div>';
                 } else {
                     availableVehicles.forEach(vehicle => {
                         // Set price based on vehicle type
                         let price = 0;
+                        let icon = '';
                         switch(vehicle.vehicleType) {
                             case 'CAR':
                                 price = 75.00;
+                                icon = '<i class="fas fa-car"></i>';
                                 break;
                             case 'VAN':
                                 price = 120.00;
+                                icon = '<i class="fas fa-shuttle-van"></i>';
                                 break;
                             case 'BIKE':
                                 price = 35.00;
+                                icon = '<i class="fas fa-motorcycle"></i>';
                                 break;
                             case 'SUV':
                                 price = 95.00;
+                                icon = '<i class="fas fa-truck"></i>';
                                 break;
                             default:
                                 price = 80.00;
+                                icon = '<i class="fas fa-car-side"></i>';
                         }
 
                         vehiclesHTML += `
                                 <div class="card vehicle-card" data-id="${vehicle.id}" data-price="${price}">
                                     <div class="card-header">
-                                        <div>${vehicle.model} (${vehicle.vehicleType})</div>
-                                        <div>${vehicle.seatCapacity} seats</div>
+                                        <div>${icon} ${vehicle.model} (${vehicle.vehicleType})</div>
+                                        <div><i class="fas fa-chair"></i> ${vehicle.seatCapacity} seats</div>
                                     </div>
-                                    <div>
-                                        <strong>Registration:</strong> ${vehicle.registrationNumber}<br>
-                                        <strong>Type:</strong> ${vehicle.vehicleType}<br>
-                                        <strong>Price:</strong> $${price.toFixed(2)} per day
+                                    <div class="card-body">
+                                        <div><strong>Registration:</strong> ${vehicle.registrationNumber}</div>
+                                        <div><strong>Type:</strong> ${vehicle.vehicleType}</div>
+                                        <div><strong>Price:</strong> $${price.toFixed(2)} per day</div>
                                     </div>
                                 </div>
                             `;
@@ -583,12 +951,12 @@
         }
 
         function showSuccess(message) {
-            $('#successAlert').text(message).show();
+            $('#successAlert').html(message).show();
             $('#errorAlert').hide();
         }
 
         function showError(message) {
-            $('#errorAlert').text(message).show();
+            $('#errorAlert').html(message).show();
             $('#successAlert').hide();
         }
     });

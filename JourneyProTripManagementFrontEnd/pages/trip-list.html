@@ -4,43 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Trips - Journey Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #34495e;
+            --danger: #e74c3c;
+            --danger-dark: #c0392b;
+            --warning: #f39c12;
+            --light: #f4f7fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #d4edda;
+            --success-text: #155724;
+            --error: #f8d7da;
+            --error-text: #721c24;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 30px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
         }
 
-        h1 {
-            color: #28a745;
-            margin-bottom: 20px;
-            text-align: center;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: var(--primary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
         }
 
         .btn {
-            display: inline-block;
-            background-color: #28a745;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
         }
 
         .btn:hover {
-            background-color: #218838;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn i {
+            font-size: 1rem;
         }
 
         .btn-view {
@@ -52,8 +124,8 @@
         }
 
         .btn-edit {
-            background-color: #ffc107;
-            color: #212529;
+            background-color: var(--warning);
+            color: white;
         }
 
         .btn-edit:hover {
@@ -61,103 +133,471 @@
         }
 
         .btn-delete {
-            background-color: #dc3545;
+            background-color: var(--danger);
         }
 
         .btn-delete:hover {
-            background-color: #c82333;
+            background-color: var(--danger-dark);
         }
 
         .alert {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
             display: none;
+            animation: fadeIn 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: var(--success);
+            color: var(--success-text);
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-success i {
+            color: #28a745;
         }
 
         .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: var(--error);
+            color: var(--error-text);
+            border-left: 4px solid #dc3545;
         }
 
-        .header {
+        .alert-danger i {
+            color: #dc3545;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
-        .nav-link {
-            color: #28a745;
-            text-decoration: none;
-            margin-left: 15px;
+        .card-header h2 {
+            color: var(--primary);
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.4rem;
         }
 
-        .nav-link:hover {
-            text-decoration: underline;
+        .card-body {
+            padding: 25px;
+        }
+
+        .trip-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(46, 204, 113, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         .trip-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
-        .trip-table th, .trip-table td {
-            padding: 12px;
+        .trip-table th,
+        .trip-table td {
+            padding: 15px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .trip-table th {
             background-color: #f8f9fa;
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--dark);
         }
 
         .trip-table tr:hover {
             background-color: #f8f9fa;
         }
 
+        .trip-table tr:last-child td {
+            border-bottom: none;
+        }
+
         .action-buttons {
             display: flex;
-            gap: 5px;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .view-btn {
+            background-color: #17a2b8;
+        }
+
+        .view-btn:hover {
+            background-color: #138496;
+        }
+
+        .edit-btn {
+            background-color: var(--warning);
+        }
+
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+        }
+
+        .delete-btn:hover {
+            background-color: var(--danger-dark);
+        }
+
+        .book-btn {
+            background-color: var(--primary);
+        }
+
+        .book-btn:hover {
+            background-color: var(--primary-dark);
         }
 
         .status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            gap: 5px;
         }
 
         .status-upcoming {
-            background-color: #cff4fc;
-            color: #055160;
+            background-color: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+        }
+
+        .status-upcoming::before {
+            content: "•";
+            color: #3498db;
+            font-size: 16px;
         }
 
         .status-ongoing {
-            background-color: #fff3cd;
-            color: #664d03;
+            background-color: rgba(243, 156, 18, 0.15);
+            color: #f39c12;
+        }
+
+        .status-ongoing::before {
+            content: "•";
+            color: #f39c12;
+            font-size: 16px;
         }
 
         .status-completed {
-            background-color: #d1e7dd;
-            color: #0f5132;
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+        }
+
+        .status-completed::before {
+            content: "•";
+            color: #27ae60;
+            font-size: 16px;
         }
 
         .no-trips {
             text-align: center;
-            padding: 30px;
-            color: #6c757d;
-            font-style: italic;
+            padding: 50px 20px;
+            color: var(--gray);
+        }
+
+        .no-trips i {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        .no-trips h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+            color: var(--gray);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .filters {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-option {
+            padding: 6px 15px;
+            border-radius: 20px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filter-option:hover {
+            border-color: var(--primary);
+        }
+
+        .filter-option.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .search-box input {
+            padding: 10px 15px;
+            padding-left: 40px;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: var(--transition);
+            width: 250px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .trip-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .trip-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -165,166 +605,93 @@
 <div class="container">
     <div class="header">
         <h1>My Trips</h1>
-        <div>
-            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="trip-create.html" class="btn">Create New Trip</a>
+        <div class="header-actions">
+            <a href="user-dashboard.html" class="nav-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="trip-create.html" class="btn"><i class="fas fa-plus"></i> Create New Trip</a>
         </div>
     </div>
 
-    <div id="successAlert" class="alert alert-success"></div>
-    <div id="errorAlert" class="alert alert-danger"></div>
+    <div id="successAlert" class="alert alert-success"><i class="fas fa-check-circle fa-lg"></i> <span id="successMessage"></span></div>
+    <div id="errorAlert" class="alert alert-danger"><i class="fas fa-exclamation-circle fa-lg"></i> <span id="errorMessage"></span></div>
 
-    <div id="tripsContainer">
-        <!-- Table will be populated by JavaScript -->
-        <div class="no-trips">Loading trips...</div>
+    <div class="trip-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-suitcase"></i>
+            </div>
+            <h3 class="stat-value" id="totalTrips">0</h3>
+            <div class="stat-label">Total Trips</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-plane-departure"></i>
+            </div>
+            <h3 class="stat-value" id="upcomingTrips">0</h3>
+            <div class="stat-label">Upcoming</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-route"></i>
+            </div>
+            <h3 class="stat-value" id="ongoingTrips">0</h3>
+            <div class="stat-label">Ongoing</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="stat-value" id="completedTrips">0</h3>
+            <div class="stat-label">Completed</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>All Trips</h2>
+        </div>
+        <div class="card-body">
+            <div class="filters">
+                <div class="filter-label">Filter by:</div>
+                <div class="filter-options">
+                    <div class="filter-option active" data-filter="all">All</div>
+                    <div class="filter-option" data-filter="upcoming">Upcoming</div>
+                    <div class="filter-option" data-filter="ongoing">Ongoing</div>
+                    <div class="filter-option" data-filter="completed">Completed</div>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search destinations...">
+                </div>
+            </div>
+
+            <div id="tripsContainer">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading your trips...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> Confirm Deletion</h3>
+            <button class="modal-close" id="closeDeleteModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this trip? This action cannot be undone and will remove all bookings associated with this trip.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelDelete"><i class="fas fa-times"></i> Cancel</button>
+            <button class="btn btn-danger" id="confirmDelete"><i class="fas fa-trash-alt"></i> Delete Trip</button>
+        </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Check if user is logged in
-        const token = localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-
-        if (!token || role !== 'USER') {
-            window.location.href = 'login.html';
-            return;
-        }
-
-        // Get user ID
-        const userInfo = JSON.parse(atob(token.split('.')[1]));
-        const userId = userInfo.sub; // Assuming the subject contains the user's email or ID
-
-        // Load user's trips
-        loadTrips(userId);
-
-        // Handle logout
-        $('#logoutButton').on('click', function (e) {
-            e.preventDefault();
-            logout();
-        });
-
-        // Function to load and display trips
-        function loadTrips(userId) {
-            $.ajax({
-                url: `http://localhost:8080/api/v1/user/trips?userId=${userId}`,
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                success: function (response) {
-                    $('#loading').hide();
-
-                    if (response.code === 200 && response.data && response.data.length > 0) {
-                        // Display the trips table
-                        $('#tripsTable').show();
-                        $('#noTrips').hide();
-
-                        // Clear existing trips
-                        $('#tripsList').empty();
-
-                        // Add each trip to the table
-                        response.data.forEach(function (trip) {
-                            let statusClass = '';
-                            switch (trip.status) {
-                                case 'UPCOMING':
-                                    statusClass = 'status-upcoming';
-                                    break;
-                                case 'ONGOING':
-                                    statusClass = 'status-ongoing';
-                                    break;
-                                case 'COMPLETED':
-                                    statusClass = 'status-completed';
-                                    break;
-                            }
-
-                            // Format dates
-                            const startDate = new Date(trip.startDate).toLocaleDateString();
-                            const endDate = new Date(trip.endDate).toLocaleDateString();
-
-                            // Create the row HTML
-                            const tripRow = `
-                            <tr>
-                                <td>${trip.destination}</td>
-                                <td>${startDate}</td>
-                                <td>${endDate}</td>
-                                <td><span class="status ${statusClass}">${trip.status}</span></td>
-                                <td class="action-buttons">
-                                    <a href="trip-details.html?id=${trip.id}" title="View Trip"><i class="fas fa-eye"></i></a>
-                                    <a href="booking-create.html?tripId=${trip.id}" title="Book Services"><i class="fas fa-book"></i></a>
-                                    <a href="#" class="delete-btn" data-id="${trip.id}" title="Delete Trip"><i class="fas fa-trash"></i></a>
-                                </td>
-                            </tr>
-                        `;
-
-                            // Add the row to the table
-                            $('#tripsList').append(tripRow);
-                        });
-
-                        // Add event listener for delete buttons
-                        $('.delete-btn').on('click', function (e) {
-                            e.preventDefault();
-                            const tripId = $(this).data('id');
-                            if (confirm('Are you sure you want to delete this trip?')) {
-                                deleteTrip(tripId);
-                            }
-                        });
-                    } else {
-                        // Show "no trips" message
-                        $('#tripsTable').hide();
-                        $('#noTrips').show();
-                    }
-                },
-                error: function () {
-                    $('#loading').hide();
-                    $('#errorMessage').text('An error occurred while loading trips. Please try again.').show();
-                }
-            });
-        }
-
-        // Function to delete a trip
-        function deleteTrip(tripId) {
-            $.ajax({
-                url: `http://localhost:8080/api/v1/user/trips/${tripId}`,
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                success: function (response) {
-                    if (response.code === 200) {
-                        // Reload the trips list
-                        loadTrips(userId);
-                    } else {
-                        $('#errorMessage').text(response.message || 'Failed to delete trip').show();
-                    }
-                },
-                error: function () {
-                    $('#errorMessage').text('An error occurred while deleting trip. Please try again.').show();
-                }
-            });
-        }
-
-        // Logout function
-        function logout() {
-            $.ajax({
-                url: 'http://localhost:8080/api/v1/auth/logout',
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                success: function () {
-                    // Clear local storage and redirect to login page
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('role');
-                    window.location.href = 'login.html';
-                },
-                error: function () {
-                    alert('Logout failed. Please try again.');
-                }
-            });
-        }
-    });
-</script>
+<script src="/ajax/trip_list.js"></script>
 </body>
 </html>

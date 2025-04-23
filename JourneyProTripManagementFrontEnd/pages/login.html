@@ -1,29 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/fonts/icomoon/style.css">
-    <link rel="stylesheet" href="/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/login_style.css">
+    <title>Login - Journey Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #34495e;
+            --light: #f4f7fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #d4edda;
+            --success-text: #155724;
+            --error: #f8d7da;
+            --error-text: #721c24;
+            --border-radius: 8px;
+            --box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
 
-    <title>Login</title>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .d-lg-flex {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        @media (min-width: 992px) {
+            .d-lg-flex {
+                flex-direction: row;
+            }
+        }
+
+        .half {
+            position: relative;
+        }
+
+        .bg {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            height: 35vh;
+        }
+
+        .bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.8) 0%, rgba(46, 204, 113, 0.8) 100%);
+            z-index: 1;
+        }
+
+        @media (min-width: 992px) {
+            .bg {
+                height: 100vh;
+                order: 2 !important;
+                flex: 1;
+            }
+        }
+
+        .contents {
+            background-color: white;
+            height: 65vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (min-width: 992px) {
+            .contents {
+                height: 100vh;
+                order: 1 !important;
+                flex: 1;
+            }
+        }
+
+        .container {
+            width: 100%;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h3 {
+            color: var(--dark);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        h3 strong {
+            color: var(--primary);
+        }
+
+        p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            padding-left: 3rem;
+            font-size: 1rem;
+            color: var(--dark);
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        .form-group.first {
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+
+        .form-group.last {
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        .form-group.first .form-control {
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+
+        .form-group.last .form-control {
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        .form-group::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--gray);
+            z-index: 1;
+        }
+
+        .form-group.first::before {
+            content: "\f007"; /* User icon */
+        }
+
+        .form-group.last::before {
+            content: "\f023"; /* Lock icon */
+        }
+
+        .d-flex {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .control {
+            position: relative;
+            display: inline-block;
+            padding-left: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--gray);
+            user-select: none;
+        }
+
+        .control input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .control__indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #e6e6e6;
+            border-radius: 4px;
+        }
+
+        .control:hover input ~ .control__indicator {
+            background-color: #ccc;
+        }
+
+        .control input:checked ~ .control__indicator {
+            background-color: var(--primary);
+        }
+
+        .control__indicator:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .control input:checked ~ .control__indicator:after {
+            display: block;
+        }
+
+        .control--checkbox .control__indicator:after {
+            left: 8px;
+            top: 4px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .ml-auto {
+            margin-left: auto;
+        }
+
+        .mb-0 {
+            margin-bottom: 0;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-5 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .caption {
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
+        .forgot-pass {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .forgot-pass:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-primary {
+            color: white;
+            background-color: var(--primary);
+            border-color: var(--primary);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: -1;
+        }
+
+        .btn-primary:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-center p {
+            margin-bottom: 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .text-center a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .text-center a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Floating shapes decoration */
+        .shape {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .shape-1 {
+            top: 15%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            filter: blur(25px);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            bottom: 15%;
+            right: 10%;
+            width: 120px;
+            height: 120px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            filter: blur(35px);
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .shape-3 {
+            top: 50%;
+            right: 20%;
+            width: 60px;
+            height: 60px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: float 10s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        #errorMessage {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            background-color: var(--error);
+            color: var(--error-text);
+            display: none;
+        }
+
+        /* Travel-themed decorative elements */
+        .travel-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.2);
+            z-index: 1;
+        }
+
+        .travel-icon-1 {
+            top: 10%;
+            left: 15%;
+            font-size: 2rem;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .travel-icon-2 {
+            top: 40%;
+            right: 10%;
+            font-size: 2.5rem;
+            animation: pulse 5s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .travel-icon-3 {
+            bottom: 15%;
+            left: 30%;
+            font-size: 2rem;
+            animation: pulse 4.5s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.2;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.4;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="d-lg-flex half">
-    <div class="bg order-1 order-md-2" style="background-image: url('../img/bg_1.jpg');"></div>
-    <div class="contents order-2 order-md-1">
+    <div class="bg order-1 order-md-2" style="background-image: url('../img/bg_1.jpg');">
+        <!-- Travel-themed icons -->
+        <div class="travel-icon travel-icon-1"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="travel-icon travel-icon-2"><i class="fas fa-plane"></i></div>
+        <div class="travel-icon travel-icon-3"><i class="fas fa-compass"></i></div>
 
+        <!-- Floating shapes -->
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    <div class="contents order-2 order-md-1">
         <div class="container">
             <div class="row align-items-center justify-content-center">
                 <div class="col-md-7">
-                    <h3>Login to <strong>Journey Pro</strong></h3>
-                    <p>Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur adipisicing.</p>
+                    <h3>Welcome to <strong>Journey Pro</strong></h3>
+                    <p>Sign in to access your travel dashboard and manage your adventures.</p>
+
+                    <div id="errorMessage"></div>
+
                     <form id="loginForm">
                         <div class="form-group first">
-                            <label for="email">Username</label>
+                            <label for="email">Email Address</label>
                             <input type="email" class="form-control" id="email" placeholder="your-email@gmail.com"
                                    required>
                         </div>
@@ -36,16 +509,18 @@
                         <div class="d-flex mb-5 align-items-center">
                             <label class="control control--checkbox mb-0">
                                 <span class="caption">Remember me</span>
-                                <input type="checkbox" checked="checked" /> <!-- Fixed missing quote -->
+                                <input type="checkbox" checked="checked" />
                                 <div class="control__indicator"></div>
                             </label>
-                            <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
+                            <span class="ml-auto"><a href="forgot-password-page.html" class="forgot-pass">Forgot Password?</a></span>
                         </div>
 
-                        <button type="submit" class="btn btn-block btn-primary">Login</button>
+                        <button type="submit" class="btn btn-block btn-primary">
+                            <span>Sign In</span>
+                        </button>
 
                         <div class="text-center mt-3">
-                            <p>Don't have an account? <a href="user_register.html">Register here</a></p>
+                            <p>Don't have an account? <a href="user_register.html">Create an account</a></p>
                         </div>
                     </form>
                 </div>
@@ -54,10 +529,9 @@
     </div>
 </div>
 
-<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
-<script src="/js/main.js"></script>
 <script src="/ajax/login.js"></script>
 </body>
 </html>

@@ -380,37 +380,35 @@
         });
 
         function loadTripDetails(tripId) {
+            const token = localStorage.getItem('token');
+
+            // Debugging: Log the token and tripId
+            console.log("Token:", token);
+            console.log("Trip ID:", tripId);
+
             $.ajax({
                 url: `http://localhost:8080/api/v1/user/trips/${tripId}`,
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
                 success: function(response) {
+                    console.log("Response:", response);
                     if (response.code === 200) {
                         const trip = response.data;
-
-                        // Format dates
                         const startDate = new Date(trip.startDate).toLocaleDateString();
                         const endDate = new Date(trip.endDate).toLocaleDateString();
 
-                        // Update the UI
                         $('#destination').text(trip.destination);
                         $('#startDate').text(startDate);
                         $('#endDate').text(endDate);
 
-                        // Add status badge
                         let statusClass = '';
                         switch(trip.status) {
-                            case 'UPCOMING':
-                                statusClass = 'status-upcoming';
-                                break;
-                            case 'ONGOING':
-                                statusClass = 'status-ongoing';
-                                break;
-                            case 'COMPLETED':
-                                statusClass = 'status-completed';
-                                break;
+                            case 'UPCOMING': statusClass = 'status-upcoming'; break;
+                            case 'ONGOING': statusClass = 'status-ongoing'; break;
+                            case 'COMPLETED': statusClass = 'status-completed'; break;
                         }
 
                         $('#status').html(`${trip.status} <span class="status-badge ${statusClass}">${trip.status}</span>`);
@@ -418,8 +416,17 @@
                         showError(response.message || 'Failed to load trip details');
                     }
                 },
-                error: function() {
-                    showError('An error occurred while loading trip details');
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    console.error("Response Text:", xhr.responseText);
+                    showError('An error occurred while loading trip details. Please try again.');
+
+                    // If unauthorized, redirect to login
+                    if (xhr.status === 401 || xhr.status === 403) {
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                    }
                 }
             });
         }
@@ -451,71 +458,66 @@
 
             if (!bookings || bookings.length === 0) {
                 bookingsHTML = `
-                        <div class="no-data">No bookings found for this trip.</div>
-                        <p>Click "Add Booking" to make a new booking for hotels, buses, or vehicles.</p>
-                    `;
+            <div class="no-data">No bookings found for this trip.</div>
+            <p>Click "Add Booking" to make a new booking for hotels, buses, or vehicles.</p>
+        `;
             } else {
                 bookings.forEach(booking => {
-                    let bookingDetails = '';
+                    // Proper date formatting with fallback
+                    const bookingDate = booking.createdAt ?
+                        new Date(booking.createdAt).toLocaleDateString() :
+                        'Not available';
 
-                    switch(booking.bookingType) {
-                        case 'HOTEL':
-                            bookingDetails = `
-                                    <div class="trip-info">
-                                        <span class="label">Hotel:</span>
-                                        <span class="value">${booking.hotelName || 'Not specified'}</span>
-                                    </div>
-                                `;
-                            break;
-                        case 'BUS':
-                            bookingDetails = `
-                                    <div class="trip-info">
-                                        <span class="label">Bus:</span>
-                                        <span class="value">${booking.busNumber || 'Not specified'}</span>
-                                    </div>
-                                `;
-                            break;
-                        case 'VEHICLE':
-                            bookingDetails = `
-                                    <div class="trip-info">
-                                        <span class="label">Vehicle:</span>
-                                        <span class="value">${booking.vehicleModel || 'Not specified'}</span>
-                                    </div>
-                                `;
-                            break;
+                    // Get booking-specific details
+                    let bookingDetails = '';
+                    let specificName = 'Not specified';
+
+                    if (booking.bookingType === 'HOTEL' && booking.hotelId) {
+                        specificName = booking.hotelName || `Hotel ID: ${booking.hotelId}`;
+                    }
+                    else if (booking.bookingType === 'BUS' && booking.busId) {
+                        specificName = booking.busNumber || `Bus ID: ${booking.busId}`;
+                    }
+                    else if (booking.bookingType === 'VEHICLE' && booking.vehicleId) {
+                        specificName = booking.vehicleModel || `Vehicle ID: ${booking.vehicleId}`;
                     }
 
+                    bookingDetails = `
+                <div class="trip-info">
+                    <span class="label">${booking.bookingType}:</span>
+                    <span class="value">${specificName}</span>
+                </div>
+            `;
+
                     bookingsHTML += `
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3>${booking.bookingType} Booking</h3>
-                                    <span>Status: ${booking.status}</span>
-                                </div>
-                                <div class="card-body">
-                                    ${bookingDetails}
-                                    <div class="trip-info">
-                                        <span class="label">Amount:</span>
-                                        <span class="value">$${booking.amount}</span>
-                                    </div>
-                                    <div class="trip-info">
-                                        <span class="label">Booking Date:</span>
-                                        <span class="value">${new Date(booking.createdAt).toLocaleDateString()}</span>
-                                    </div>
-                                    <div style="margin-top: 10px;">
-                                        <a href="booking-details.html?id=${booking.id}" class="btn">View Details</a>
-                                        ${booking.status !== 'CANCELED' ?
+                <div class="card">
+                    <div class="card-header">
+                        <h3>${booking.bookingType} Booking</h3>
+                        <span>Status: ${booking.status || 'CONFIRMED'}</span>
+                    </div>
+                    <div class="card-body">
+                        ${bookingDetails}
+                        <div class="trip-info">
+                            <span class="label">Amount:</span>
+                            <span class="value">$${booking.amount?.toFixed(2) || '0.00'}</span>
+                        </div>
+                        <div class="trip-info">
+                            <span class="label">Booking Date:</span>
+                            <span class="value">${bookingDate}</span>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <a href="booking-details.html?id=${booking.id}" class="btn">View Details</a>
+                            ${booking.status !== 'CANCELED' ?
                         `<button class="btn btn-delete cancel-booking" data-id="${booking.id}">Cancel Booking</button>` :
                         ''}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                        </div>
+                    </div>
+                </div>
+            `;
                 });
             }
 
             $('#bookingsContainer').html(bookingsHTML);
-
-            // Attach cancel booking event handlers
             $('.cancel-booking').on('click', function() {
                 const bookingId = $(this).data('id');
                 cancelBooking(bookingId);
@@ -554,21 +556,23 @@
 
                 feedbacks.forEach(feedback => {
                     const stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+                    const feedbackDate = feedback.createdAt ?
+                        new Date(feedback.createdAt).toLocaleDateString() :
+                        'Date not available';
 
                     feedbackHTML += `
-                            <div class="card">
-                                <div class="card-header">
-                                    <div style="color: gold; font-size: 20px;">${stars}</div>
-                                    <div>${new Date(feedback.createdAt).toLocaleDateString()}</div>
-                                </div>
-                                <div class="card-body">
-                                    <p>${feedback.comment}</p>
-                                </div>
-                            </div>
-                        `;
+                <div class="card">
+                    <div class="card-header">
+                        <div style="color: gold; font-size: 20px;">${stars}</div>
+                        <div>${feedbackDate}</div>
+                    </div>
+                    <div class="card-body">
+                        <p>${feedback.comment || 'No comment provided'}</p>
+                    </div>
+                </div>
+            `;
                 });
 
-                // If feedback exists, hide the form
                 $('#feedbackForm').hide();
             }
 

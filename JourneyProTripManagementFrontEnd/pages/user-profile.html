@@ -4,323 +4,419 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - Journey Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #34495e;
+            --danger: #e74c3c;
+            --light: #f4f7fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #d4edda;
+            --success-text: #155724;
+            --error: #f8d7da;
+            --error-text: #721c24;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
-        h1 {
-            color: #28a745;
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .profile-header h1 {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: var(--primary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            margin-bottom: 25px;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header h2 {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.4rem;
+            margin: 0;
+        }
+
+        .card-header .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
             margin-bottom: 20px;
-            text-align: center;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: var(--success);
+            color: var(--success-text);
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-success i {
+            color: #28a745;
+        }
+
+        .alert-danger {
+            background-color: var(--error);
+            color: var(--error-text);
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-danger i {
+            color: #dc3545;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
+            padding: 12px 15px;
+            padding-left: 40px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        .form-group input:read-only {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        .form-group .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            color: var(--gray);
+            font-size: 16px;
         }
 
         .form-row {
             display: flex;
-            justify-content: space-between;
+            gap: 20px;
         }
 
         .form-row .form-group {
-            width: 48%;
+            flex: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         .btn {
-            display: inline-block;
-            background-color: #28a745;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
             color: white;
-            padding: 10px 20px;
-            margin-right: 10px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
         }
 
         .btn:hover {
-            background-color: #218838;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            background-color: #6c757d;
+            background-color: var(--secondary);
         }
 
         .btn-secondary:hover {
-            background-color: #5a6268;
+            background-color: #2c3e50;
         }
 
-        .alert {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
+        .btn i {
+            font-size: 1rem;
         }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .profile-completeness {
+            margin-bottom: 25px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
         }
 
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .header {
+        .completeness-title {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .nav-link {
-            color: #28a745;
-            text-decoration: none;
-            margin-left: 15px;
+        .completeness-title h3 {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0;
         }
 
-        .nav-link:hover {
-            text-decoration: underline;
+        .completeness-title span {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 10px;
+            transition: width 1s ease;
+            width: 0%;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+            color: var(--gray);
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <h1>User Profile</h1>
-        <div>
-            <a href="user-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="index.html" class="nav-link">Home</a>
+    <div class="profile-header">
+        <h1>My Profile</h1>
+        <div class="header-actions">
+            <a href="user-dashboard.html" class="nav-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
         </div>
     </div>
 
-    <div id="successAlert" class="alert alert-success"></div>
-    <div id="errorAlert" class="alert alert-danger"></div>
+    <div id="successAlert" class="alert alert-success"><i class="fas fa-check-circle fa-lg"></i> <span id="successMessage"></span></div>
+    <div id="errorAlert" class="alert alert-danger"><i class="fas fa-exclamation-circle fa-lg"></i> <span id="errorMessage"></span></div>
 
-    <form id="profileForm">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="firstName">First Name</label>
-                <input type="text" id="firstName" name="firstName" required>
+    <div id="loadingArea" class="loading">
+        <i class="fas fa-circle-notch"></i> Loading your profile...
+    </div>
+
+    <div id="profileContent" style="display: none;">
+        <div class="profile-completeness">
+            <div class="completeness-title">
+                <h3>Profile Completeness</h3>
+                <span id="completenessPercentage">0%</span>
             </div>
-            <div class="form-group">
-                <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" name="lastName" required>
+            <div class="progress-bar">
+                <div id="completenessProgress" class="progress"></div>
             </div>
         </div>
-        <div class="form-group">
-            <label for="email">Email (cannot be changed)</label>
-            <input type="email" id="email" name="email" readonly>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Personal Information</h2>
+                <div class="avatar" id="userInitials">JP</div>
+            </div>
+            <div class="card-body">
+                <form id="profileForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="email" name="email" placeholder="Your email address" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number</label>
+                        <i class="fas fa-phone-alt input-icon"></i>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn" id="saveBtn"><i class="fas fa-save"></i> Save Changes</button>
+                        <a href="change-password.html" class="btn btn-secondary"><i class="fas fa-key"></i> Change Password</a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="phoneNumber">Phone Number</label>
-            <input type="tel" id="phoneNumber" name="phoneNumber" required>
-        </div>
-        <div class="form-group">
-            <label for="address">Address</label>
-            <input type="text" id="address" name="address" required>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn">Save Changes</button>
-            <a href="change-password.html" class="btn btn-secondary">Change Password</a>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Check if user is logged in
-        const token = localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-
-        if (!token || role !== 'USER') {
-            window.location.href = 'login.html';
-            return;
-        }
-
-        // Show loading message and hide profile section
-        $('#loadingMessage').removeClass('hidden');
-        $('#profileSection').addClass('hidden');
-
-        // Load user profile data
-        loadUserProfile();
-
-        // Handle profile form submission
-        $('#profileForm').on('submit', function (e) {
-            e.preventDefault();
-            updateUserProfile();
-        });
-
-        // Handle password form submission
-        $('#passwordForm').on('submit', function (e) {
-            e.preventDefault();
-
-            // Check if passwords match
-            const newPassword = $('#newPassword').val();
-            const confirmPassword = $('#confirmPassword').val();
-
-            if (newPassword !== confirmPassword) {
-                $('#passwordErrorMessage').text('New passwords do not match');
-                $('#passwordSuccessMessage').text('');
-                return;
-            }
-
-            changePassword();
-        });
-
-        // Handle logout
-        $('#logoutButton').on('click', function (e) {
-            e.preventDefault();
-            logout();
-        });
-
-        function loadUserProfile() {
-            $.ajax({
-                url: 'http://localhost:8080/api/v1/user/profile',
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                success: function (response) {
-                    if (response.code === 200) {
-                        // Fill the form with user data
-                        const userData = response.data;
-                        $('#firstName').val(userData.firstName);
-                        $('#lastName').val(userData.lastName);
-                        $('#email').val(userData.email);
-                        $('#phoneNumber').val(userData.phoneNumber);
-                        $('#address').val(userData.address);
-
-                        // Show profile section and hide loading message
-                        $('#loadingMessage').addClass('hidden');
-                        $('#profileSection').removeClass('hidden');
-                    } else {
-                        $('#profileErrorMessage').text(response.message || 'Failed to load profile');
-                    }
-                },
-                error: function () {
-                    $('#profileErrorMessage').text('An error occurred. Please try again.');
-                    $('#loadingMessage').addClass('hidden');
-                }
-            });
-        }
-
-        function updateUserProfile() {
-            const userData = {
-                firstName: $('#firstName').val(),
-                lastName: $('#lastName').val(),
-                email: $('#email').val(),
-                phoneNumber: $('#phoneNumber').val(),
-                address: $('#address').val()
-            };
-
-            $.ajax({
-                url: 'http://localhost:8080/api/v1/user/profile',
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                contentType: 'application/json',
-                data: JSON.stringify(userData),
-                success: function (response) {
-                    if (response.code === 200) {
-                        $('#profileSuccessMessage').text('Profile updated successfully');
-                        $('#profileErrorMessage').text('');
-                    } else {
-                        $('#profileErrorMessage').text(response.message || 'Failed to update profile');
-                        $('#profileSuccessMessage').text('');
-                    }
-                },
-                error: function () {
-                    $('#profileErrorMessage').text('An error occurred. Please try again.');
-                    $('#profileSuccessMessage').text('');
-                }
-            });
-        }
-
-        function changePassword() {
-            const passwordData = {
-                oldPassword: $('#oldPassword').val(),
-                newPassword: $('#newPassword').val()
-            };
-
-            $.ajax({
-                url: 'http://localhost:8080/api/v1/user/change-password',
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                contentType: 'application/json',
-                data: JSON.stringify(passwordData),
-                success: function (response) {
-                    if (response.code === 201) {
-                        $('#passwordSuccessMessage').text('Password changed successfully');
-                        $('#passwordErrorMessage').text('');
-                        // Reset the form
-                        $('#passwordForm')[0].reset();
-                    } else {
-                        $('#passwordErrorMessage').text(response.message || 'Failed to change password');
-                        $('#passwordSuccessMessage').text('');
-                    }
-                },
-                error: function () {
-                    $('#passwordErrorMessage').text('An error occurred. Please try again.');
-                    $('#passwordSuccessMessage').text('');
-                }
-            });
-        }
-
-        function logout() {
-            $.ajax({
-                url: 'http://localhost:8080/api/v1/auth/logout',
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                success: function () {
-                    // Clear local storage and redirect to login page
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('role');
-                    window.location.href = 'login.html';
-                },
-                error: function () {
-                    alert('Logout failed. Please try again.');
-                }
-            });
-        }
-    });
-</script>
+<script src="/ajax/user_profile.js"></script>
 </body>
 </html>
