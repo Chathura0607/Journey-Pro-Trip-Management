@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface BusRepository extends JpaRepository<Bus, UUID> {
     List<Bus> findByRouteContainingIgnoreCase(String route);
+    boolean existsByBusNumber(String busNumber);
 }

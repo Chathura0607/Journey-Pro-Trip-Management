@@ -13,10 +13,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "trips")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class Trip {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -26,7 +27,7 @@ public class Trip {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = true) // Admin can create trips
+    @JoinColumn(name = "admin_id")
     private Admin admin;
 
     private String destination;
@@ -34,7 +35,7 @@ public class Trip {
     private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    private TripStatus status; // UPCOMING, ONGOING, COMPLETED
+    private TripStatus status;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<Booking> bookings;
@@ -43,4 +44,12 @@ public class Trip {
     private List<Feedback> feedbacks;
 
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        if (status == null) {
+            status = TripStatus.UPCOMING;
+        }
+    }
 }
