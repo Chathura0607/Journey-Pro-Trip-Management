@@ -9,4 +9,7 @@ public interface BusService {
     List<BusDTO> getAllBuses();
     BusDTO getBusById(String busId);
     List<BusDTO> searchBusesByRoute(String route);
+    String saveBus(BusDTO busDTO);
+    String updateBus(BusDTO busDTO);
+    String deleteBus(String busId);
 }

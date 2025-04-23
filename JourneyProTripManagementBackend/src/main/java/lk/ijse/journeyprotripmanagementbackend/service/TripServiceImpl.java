@@ -1,17 +1,17 @@
 package lk.ijse.journeyprotripmanagementbackend.service;
 
-import jakarta.mail.MessagingException;
 import lk.ijse.journeyprotripmanagementbackend.dto.TripDTO;
 import lk.ijse.journeyprotripmanagementbackend.entity.Trip;
 import lk.ijse.journeyprotripmanagementbackend.entity.User;
 import lk.ijse.journeyprotripmanagementbackend.enums.TripStatus;
 import lk.ijse.journeyprotripmanagementbackend.repo.TripRepository;
 import lk.ijse.journeyprotripmanagementbackend.repo.UserRepository;
+import lk.ijse.journeyprotripmanagementbackend.service.TripService;
 import lk.ijse.journeyprotripmanagementbackend.util.VarList;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.context.Context;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TripServiceImpl implements TripService {
 
     @Autowired
@@ -31,127 +32,99 @@ public class TripServiceImpl implements TripService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private EmailService emailService;
-
     @Override
     public int createTrip(TripDTO tripDTO) {
-        // Convert the userId from String to UUID
-        UUID userId;
         try {
-            userId = UUID.fromString(tripDTO.getUserId());
-        } catch (IllegalArgumentException e) {
-            return VarList.Not_Found; // Invalid UUID format
-        }
+            UUID userId = UUID.fromString(tripDTO.getUserId());
+            Optional<User> user = userRepository.findById(userId);
 
-        // Find the user by ID
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            if (user.isPresent()) {
+                Trip trip = new Trip();
+                trip.setUser(user.get());
+                trip.setDestination(tripDTO.getDestination());
+                trip.setStartDate(tripDTO.getStartDate());
+                trip.setEndDate(tripDTO.getEndDate());
+                trip.setStatus(TripStatus.UPCOMING);
+                trip.setCreatedAt(LocalDateTime.now());
 
-            // Create a new trip
-            Trip trip = new Trip();
-            trip.setUser(user);
-            trip.setDestination(tripDTO.getDestination());
-            trip.setStartDate(tripDTO.getStartDate());
-            trip.setEndDate(tripDTO.getEndDate());
-            trip.setStatus(TripStatus.UPCOMING); // Default status
-            trip.setCreatedAt(LocalDateTime.now());
-
-            // Save the trip
-            tripRepository.save(trip);
-
-            // Send email to the user using Thymeleaf template
-            try {
-                Context context = new Context();
-                context.setVariable("userName", user.getFirstName()); // Add user's first name
-                context.setVariable("destination", tripDTO.getDestination());
-                context.setVariable("startDate", tripDTO.getStartDate());
-                context.setVariable("endDate", tripDTO.getEndDate());
-
-                emailService.sendHtmlEmailWithTemplate(user.getEmail(), "Trip Confirmation", "trip-confirmation", context);
-            } catch (MessagingException e) {
-                // Log the error or handle it appropriately
-                System.err.println("Failed to send email: " + e.getMessage());
+                tripRepository.save(trip);
+                return VarList.Created;
             }
-
-            return VarList.Created; // Success
-        } else {
-            return VarList.Not_Found; // User not found
+            return VarList.Not_Found;
+        } catch (Exception e) {
+            return VarList.Internal_Server_Error;
         }
     }
 
     @Override
     public TripDTO getTripById(String tripId) {
-        // Convert the tripId from String to UUID
-        UUID uuid;
         try {
-            uuid = UUID.fromString(tripId);
+            UUID uuid = UUID.fromString(tripId); // Convert String to UUID
+            Optional<Trip> trip = tripRepository.findById(uuid); // Use UUID here
+            return trip.map(this::convertToDto).orElse(null);
         } catch (IllegalArgumentException e) {
-            return null; // Invalid UUID format
-        }
-
-        // Find the trip by ID
-        Optional<Trip> optionalTrip = tripRepository.findById(uuid);
-
-        // If the trip exists, map it to TripDTO and return
-        if (optionalTrip.isPresent()) {
-            Trip trip = optionalTrip.get();
-            return modelMapper.map(trip, TripDTO.class);
-        } else {
-            return null; // Trip not found
+            // Handle case where tripId is not a valid UUID
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
     @Override
     public List<TripDTO> getAllTripsForUser(String userId) {
-        // Convert the userId from String to UUID
-        UUID uuid = UUID.fromString(userId);
-
-        // Find all trips for the user
-        List<Trip> trips = tripRepository.findByUserId(uuid);
-
-        // Map trips to TripDTO
-        return trips.stream()
-                .map(trip -> modelMapper.map(trip, TripDTO.class))
-                .collect(Collectors.toList());
+        try {
+            UUID uuid = UUID.fromString(userId);
+            List<Trip> trips = tripRepository.findByUserId(uuid);
+            return trips.stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public int updateTrip(String tripId, TripDTO tripDTO) {
-        // Convert the tripId from String to UUID
-        UUID uuid = UUID.fromString(tripId);
+        try {
+            UUID uuid = UUID.fromString(tripId);
+            Optional<Trip> trip = tripRepository.findById(uuid);
 
-        // Find the trip by ID
-        Optional<Trip> optionalTrip = tripRepository.findById(uuid);
-        if (optionalTrip.isPresent()) {
-            Trip trip = optionalTrip.get();
+            if (trip.isPresent()) {
+                Trip existingTrip = trip.get();
+                existingTrip.setDestination(tripDTO.getDestination());
+                existingTrip.setStartDate(tripDTO.getStartDate());
+                existingTrip.setEndDate(tripDTO.getEndDate());
 
-            // Update trip details
-            trip.setDestination(tripDTO.getDestination());
-            trip.setStartDate(tripDTO.getStartDate());
-            trip.setEndDate(tripDTO.getEndDate());
-
-            // Save the updated trip
-            tripRepository.save(trip);
-            return VarList.OK; // Success
-        } else {
-            return VarList.Not_Found; // Trip not found
+                tripRepository.save(existingTrip);
+                return VarList.OK;
+            }
+            return VarList.Not_Found;
+        } catch (Exception e) {
+            return VarList.Internal_Server_Error;
         }
     }
 
     @Override
     public int deleteTrip(String tripId) {
-        // Convert the tripId from String to UUID
-        UUID uuid = UUID.fromString(tripId);
-
-        // Check if the trip exists
-        if (tripRepository.existsById(uuid)) {
-            // Delete the trip
-            tripRepository.deleteById(uuid);
-            return VarList.OK; // Success
-        } else {
-            return VarList.Not_Found; // Trip not found
+        try {
+            UUID uuid = UUID.fromString(tripId);
+            if (tripRepository.existsById(uuid)) {
+                tripRepository.deleteById(uuid);
+                return VarList.OK;
+            }
+            return VarList.Not_Found;
+        } catch (Exception e) {
+            return VarList.Internal_Server_Error;
         }
+    }
+
+    private TripDTO convertToDto(Trip trip) {
+        TripDTO tripDTO = modelMapper.map(trip, TripDTO.class);
+        tripDTO.setUserId(trip.getUser().getId().toString());
+        if (trip.getAdmin() != null) {
+            tripDTO.setAdminId(trip.getAdmin().getId().toString());
+        }
+        return tripDTO;
     }
 }
