@@ -36,40 +36,43 @@ public class TripController {
 
     @GetMapping("/{tripId}")
     public ResponseEntity<ResponseDTO> getTripById(@PathVariable String tripId) {
-        TripDTO tripDTO = tripService.getTripById(tripId);
-        if (tripDTO != null) {
-            return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trip found", tripDTO));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseDTO(VarList.Not_Found, "Trip not found", null));
+        try {
+            TripDTO tripDTO = tripService.getTripById(tripId);
+            if (tripDTO != null) {
+                return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trip retrieved successfully", tripDTO));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseDTO(VarList.Not_Found, "Trip not found", null));
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDTO(VarList.Bad_Request, "Invalid trip ID format", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(VarList.Internal_Server_Error, "Error retrieving trip", null));
         }
     }
 
     @GetMapping
     public ResponseEntity<ResponseDTO> getAllTripsForUser(@RequestParam String userId) {
-        try {
-            List<TripDTO> trips = tripService.getAllTripsForUser(userId);
-            return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trips fetched successfully", trips));
-        } catch (Exception e) {
+        List<TripDTO> trips = tripService.getAllTripsForUser(userId);
+        if (trips != null) {
+            return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trips retrieved successfully", trips));
+        } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDTO(VarList.Internal_Server_Error, "Failed to fetch trips", null));
+                    .body(new ResponseDTO(VarList.Internal_Server_Error, "Error retrieving trips", null));
         }
     }
 
     @PutMapping("/{tripId}")
     public ResponseEntity<ResponseDTO> updateTrip(@PathVariable String tripId, @RequestBody TripDTO tripDTO) {
-        try {
-            int result = tripService.updateTrip(tripId, tripDTO);
-            if (result == VarList.OK) {
-                return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trip updated successfully", null));
-            } else if (result == VarList.Not_Found) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ResponseDTO(VarList.Not_Found, "Trip not found", null));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ResponseDTO(VarList.Internal_Server_Error, "Failed to update trip", null));
-            }
-        } catch (Exception e) {
+        int result = tripService.updateTrip(tripId, tripDTO);
+        if (result == VarList.OK) {
+            return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trip updated successfully", null));
+        } else if (result == VarList.Not_Found) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(VarList.Not_Found, "Trip not found", null));
+        } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(VarList.Internal_Server_Error, "Failed to update trip", null));
         }
@@ -77,18 +80,13 @@ public class TripController {
 
     @DeleteMapping("/{tripId}")
     public ResponseEntity<ResponseDTO> deleteTrip(@PathVariable String tripId) {
-        try {
-            int result = tripService.deleteTrip(tripId);
-            if (result == VarList.OK) {
-                return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trip deleted successfully", null));
-            } else if (result == VarList.Not_Found) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ResponseDTO(VarList.Not_Found, "Trip not found", null));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ResponseDTO(VarList.Internal_Server_Error, "Failed to delete trip", null));
-            }
-        } catch (Exception e) {
+        int result = tripService.deleteTrip(tripId);
+        if (result == VarList.OK) {
+            return ResponseEntity.ok(new ResponseDTO(VarList.OK, "Trip deleted successfully", null));
+        } else if (result == VarList.Not_Found) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(VarList.Not_Found, "Trip not found", null));
+        } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO(VarList.Internal_Server_Error, "Failed to delete trip", null));
         }
