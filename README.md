@@ -66,8 +66,7 @@ A comprehensive travel and trip management platform built using **HTML**, **CSS*
 
 ## 🎥 Demo Video
 
-📺 Watch the complete walkthrough on [YouTube](https://youtu.be/your-video-id)  
-> _(Replace `your-video-id` with the actual YouTube video ID)_
+📺 Watch the complete walkthrough on [YouTube](https://youtu.be/dsYHtukdk5s)  
 
 ---
 
